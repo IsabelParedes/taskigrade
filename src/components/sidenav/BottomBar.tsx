@@ -4,11 +4,13 @@ interface BottomBarProps {}
 
 const BottomBar = ({}: BottomBarProps) => {
   return (
-    <div className="h-12 w-full">
-      <div className="flex justify-around">
-        <Button variant={"secondary"}>Invite</Button>
-        <Button variant={"secondary"}>Upgrade</Button>
-      </div>
+    <div className="flex justify-around items-center w-full">
+      <Button size={"sm"} variant={"secondary"}>
+        Invite
+      </Button>
+      <Button size={"sm"} variant={"secondary"}>
+        Upgrade
+      </Button>
     </div>
   );
 };
