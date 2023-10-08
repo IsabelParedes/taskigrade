@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { Bell, Home, Trophy } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import BottomBar from "./BottomBar";
@@ -26,8 +29,14 @@ import Spaces from "./Spaces";
 interface SideNavProps {}
 
 const SideNav = ({}: SideNavProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsOpen(true);
+  }, []);
+
   return (
-    <Sheet defaultOpen>
+    <Sheet open={isOpen}>
       <SheetTrigger asChild>
         <Button variant="outline">Open</Button>
       </SheetTrigger>
