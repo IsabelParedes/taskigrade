@@ -4,7 +4,7 @@ interface KanbanCardProps {}
 
 const KanbanCard = ({}: KanbanCardProps) => {
   return (
-    <Card>
+    <Card draggable="true" className="cursor-move task">
       <CardHeader>
         <CardTitle>Title</CardTitle>
       </CardHeader>

@@ -9,7 +9,7 @@ interface KanbanColumnProps {
 
 const KanbanColumn = ({ title }: KanbanColumnProps) => {
   return (
-    <Card className="basis-1/4">
+    <Card className="basis-1/4 lane">
       <CardHeader className="capitalize text-center bg-secondary shadow-lg rounded-lg">
         <KanbanHeader title={title} />
         <Separator />
