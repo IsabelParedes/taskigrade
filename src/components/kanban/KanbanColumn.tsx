@@ -47,7 +47,7 @@ const KanbanColumn = ({
       className="basis-1/4 border-0"
     >
       <CardHeader className="capitalize text-center bg-secondary shadow-lg rounded-lg">
-        <KanbanHeader title={column.title} />
+        <KanbanHeader title={column.title} count={tasks.length} />
         <Separator />
       </CardHeader>
 

@@ -12,17 +12,18 @@ import {
 
 interface KanbanHeaderProps {
   title: string;
+  count: number;
   // title: "to do" | "in progress" | "test" | "complete";
 }
 
-const KanbanHeader = ({ title }: KanbanHeaderProps) => {
+const KanbanHeader = ({ count, title }: KanbanHeaderProps) => {
   const handleClick = () => {
     console.log("click");
   };
 
   return (
     <div className="flex justify-between items-center">
-      {title} <Badge variant={"outline"}>2</Badge>
+      {title} <Badge variant={"outline"}>{count}</Badge>
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>

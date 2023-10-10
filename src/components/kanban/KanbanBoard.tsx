@@ -250,7 +250,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       onDragEnd={onDragEnd}
       onDragOver={onDragOver}
     >
-      <div className="flex flex-nowrap gap-4 overflow-scroll">
+      <div className="flex flex-nowrap gap-4 justify-center">
         <SortableContext items={columnsId}>
           {columns.map((col) => (
             <KanbanColumn
