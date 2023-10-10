@@ -31,7 +31,7 @@ const KanbanHeader = ({ count, title }: KanbanHeaderProps) => {
               onClick={handleClick}
               size={"icon"}
               variant={"ghost"}
-              className="h-4 w-4"
+              className="h-5 w-5"
             >
               <Plus className="w-4 h-4" />
             </Button>

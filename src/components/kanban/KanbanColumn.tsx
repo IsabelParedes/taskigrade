@@ -46,12 +46,12 @@ const KanbanColumn = ({
       {...listeners}
       className="basis-1/4 border-0 cursor-auto"
     >
-      <CardHeader className="capitalize text-center bg-secondary shadow-lg rounded-lg">
+      <CardHeader className="capitalize text-center bg-secondary text-secondary-foreground shadow-lg rounded-lg">
         <KanbanHeader title={column.title} count={tasks.length} />
         <Separator />
       </CardHeader>
 
-      <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg h-full">
+      <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <KanbanCard

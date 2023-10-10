@@ -55,7 +55,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       <div
         ref={setNodeRef}
         style={style}
-        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 bg-card"
+        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 bg-accent"
       />
     );
   }
@@ -98,7 +98,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       {...attributes}
       {...listeners}
       onClick={toggleEditMode}
-      className="cursor-grab"
+      className="cursor-grab hover:bg-accent/80"
     >
       <CardHeader>
         <CardTitle className="flex">
@@ -112,7 +112,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           aria-label="delete task"
           size={"icon"}
           variant={"outline"}
-          className="h-6 w-6"
+          className="h-6 w-6 bg-transparent hover:bg-destructive"
           onClick={() => {
             deleteTask(task.id);
           }}
