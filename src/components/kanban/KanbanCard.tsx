@@ -55,7 +55,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       <div
         ref={setNodeRef}
         style={style}
-        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 border-primary"
+        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 bg-card"
       />
     );
   }
@@ -107,11 +107,11 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="text-sm">{task.content}</CardContent>
-      <CardFooter>
+      <CardFooter className="justify-end">
         <Button
           aria-label="delete task"
           size={"icon"}
-          variant={"destructive"}
+          variant={"outline"}
           className="h-6 w-6"
           onClick={() => {
             deleteTask(task.id);

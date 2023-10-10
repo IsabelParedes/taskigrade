@@ -51,7 +51,7 @@ const KanbanColumn = ({
         <Separator />
       </CardHeader>
 
-      <CardContent className="gap-4 flex flex-col mt-4 bg-muted p-4 shadow-lg rounded-lg h-full">
+      <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg h-full">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <KanbanCard
