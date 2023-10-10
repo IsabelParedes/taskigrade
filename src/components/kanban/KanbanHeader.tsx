@@ -11,7 +11,8 @@ import {
 } from "../ui/tooltip";
 
 interface KanbanHeaderProps {
-  title: "to do" | "in progress" | "test" | "complete";
+  title: string;
+  // title: "to do" | "in progress" | "test" | "complete";
 }
 
 const KanbanHeader = ({ title }: KanbanHeaderProps) => {
