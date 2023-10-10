@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash } from "lucide-react";
+import { Hash, Trash } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -95,19 +95,23 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       className="cursor-grab"
     >
       <CardHeader>
-        <CardTitle>{task.id}</CardTitle>
+        <CardTitle className="flex">
+          <Hash />
+          {task.id}
+        </CardTitle>
       </CardHeader>
       <CardContent>{task.content}</CardContent>
       <CardFooter>
         <Button
+          aria-label="delete task"
           size={"icon"}
-          variant={"ghost"}
-          className="h-4 w-4"
+          variant={"destructive"}
+          className="h-6 w-6"
           onClick={() => {
             deleteTask(task.id);
           }}
         >
-          <Trash />
+          <Trash className="h-4 w-4" />
         </Button>
       </CardFooter>
     </Card>
