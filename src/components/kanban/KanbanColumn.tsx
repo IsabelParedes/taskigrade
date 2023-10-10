@@ -1,8 +1,8 @@
+import { Column, Id, Task } from "@/temp/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { Column, Id, Task } from "./KanbanBoard";
 import KanbanCard from "./KanbanCard";
 import KanbanHeader from "./KanbanHeader";
 

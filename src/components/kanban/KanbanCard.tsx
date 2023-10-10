@@ -1,5 +1,6 @@
 "use client";
 
+import { Id, Task } from "@/temp/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Hash, Trash } from "lucide-react";
@@ -13,7 +14,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
-import { Id, Task } from "./KanbanBoard";
 
 interface KanbanCardProps {
   task: Task;
