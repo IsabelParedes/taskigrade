@@ -1,6 +1,6 @@
 "use client";
 
-import { defaultCols, defaultTasks } from "@/temp/constants";
+import { dummyCols, dummyTasks } from "@/temp/constants";
 import { Column, Id, Task } from "@/temp/types";
 import {
   DndContext,
@@ -21,8 +21,8 @@ import KanbanColumn from "./KanbanColumn";
 interface KanbanBoardProps {}
 
 const KanbanBoard = ({}: KanbanBoardProps) => {
-  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
-  const [columns, setColumns] = useState<Column[]>(defaultCols);
+  const [tasks, setTasks] = useState<Task[]>(dummyTasks);
+  const [columns, setColumns] = useState<Column[]>(dummyCols);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -79,27 +79,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     }
   };
 
-  const onDragEnd = (e: DragEndEvent) => {
-    setActiveColumn(null);
-    setActiveTask(null);
-
-    const { active, over } = e;
-    if (!over) {
-      // not over a valid element
-      return;
-    }
-
-    const activeColId = active.id;
-    const overColId = over.id;
-
-    if (activeColId === overColId) {
-      // dropped column in it's original spot
-      return;
-    }
-  };
-
   const onDragOver = (e: DragOverEvent) => {
-    console.log("e", e);
     const { active, over } = e;
     if (!over) {
       // not over a valid element
@@ -152,7 +132,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     <DndContext
       sensors={sensors}
       onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
       onDragOver={onDragOver}
     >
       <div className="flex flex-nowrap gap-4 justify-center">

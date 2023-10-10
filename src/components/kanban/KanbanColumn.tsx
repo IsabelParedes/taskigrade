@@ -44,7 +44,7 @@ const KanbanColumn = ({
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      className="basis-1/4 border-0"
+      className="basis-1/4 border-0 cursor-auto"
     >
       <CardHeader className="capitalize text-center bg-secondary shadow-lg rounded-lg">
         <KanbanHeader title={column.title} count={tasks.length} />

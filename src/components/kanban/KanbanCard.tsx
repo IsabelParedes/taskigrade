@@ -51,7 +51,13 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
   };
 
   if (isDragging) {
-    return <div ref={setNodeRef} style={style} className="opacity-30" />;
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 border-primary"
+      />
+    );
   }
 
   if (editMode) {
@@ -100,7 +106,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           {task.id}
         </CardTitle>
       </CardHeader>
-      <CardContent>{task.content}</CardContent>
+      <CardContent className="text-sm">{task.content}</CardContent>
       <CardFooter>
         <Button
           aria-label="delete task"

@@ -1,21 +1,25 @@
 import { Column, Task } from "./types";
 
-export const defaultCols: Column[] = [
+export const dummyCols: Column[] = [
   {
     id: "todo",
-    title: "Todo",
+    title: "To Do",
   },
   {
-    id: "doing",
-    title: "Work in progress",
+    id: "inprogress",
+    title: "In Progress",
   },
   {
-    id: "done",
-    title: "Done",
+    id: "test",
+    title: "Test",
+  },
+  {
+    id: "complete",
+    title: "Complete",
   },
 ];
 
-export const defaultTasks: Task[] = [
+export const dummyTasks: Task[] = [
   {
     id: "1",
     columnId: "todo",
@@ -29,42 +33,42 @@ export const defaultTasks: Task[] = [
   },
   {
     id: "3",
-    columnId: "doing",
+    columnId: "inprogress",
     content: "Conduct security testing",
   },
   {
     id: "4",
-    columnId: "doing",
+    columnId: "inprogress",
     content: "Analyze competitors",
   },
   {
     id: "5",
-    columnId: "done",
+    columnId: "test",
     content: "Create UI kit documentation",
   },
   {
     id: "6",
-    columnId: "done",
+    columnId: "test",
     content: "Dev meeting",
   },
   {
     id: "7",
-    columnId: "done",
+    columnId: "test",
     content: "Deliver dashboard prototype",
   },
   {
     id: "8",
-    columnId: "todo",
+    columnId: "complete",
     content: "Optimize application performance",
   },
   {
     id: "9",
-    columnId: "todo",
+    columnId: "complete",
     content: "Implement data validation",
   },
   {
     id: "10",
-    columnId: "todo",
+    columnId: "complete",
     content: "Design database schema",
   },
   {
@@ -74,12 +78,12 @@ export const defaultTasks: Task[] = [
   },
   {
     id: "12",
-    columnId: "doing",
+    columnId: "inprogress",
     content: "Implement error logging and monitoring",
   },
   {
     id: "13",
-    columnId: "doing",
+    columnId: "inprogress",
     content: "Design and implement responsive UI",
   },
 ];
