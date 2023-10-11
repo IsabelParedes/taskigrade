@@ -1,3 +1,4 @@
+import Navbar from "@/components/NavBar";
 import Providers from "@/components/Providers";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -22,6 +23,7 @@ export default function RootLayout({
       <ClerkProvider>
         <Providers>
           <body className={cn("min-h-screen", inter.className)}>
+            <Navbar />
             {children}
           </body>
         </Providers>
