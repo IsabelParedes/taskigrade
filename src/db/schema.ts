@@ -4,9 +4,7 @@ import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 export const users = sqliteTable("users", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   clerkId: text("clerk_id").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`CURRENT_TIMESTAMP`
-  ),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -20,9 +18,7 @@ export const tasks = sqliteTable("tasks", {
   category: text("category", {
     enum: ["todo", "inprogress", "test", "complete"],
   }).notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`CURRENT_TIMESTAMP`
-  ),
+  createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer("created_at", { mode: "timestamp" }),
   createdById: integer("created_by_id").notNull(),
 });

@@ -1,5 +1,6 @@
 import Providers from "@/components/Providers";
 import { cn } from "@/lib/utils";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -18,9 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Providers>
-        <body className={cn("min-h-screen", inter.className)}>{children}</body>
-      </Providers>{" "}
+      <ClerkProvider>
+        <Providers>
+          <body className={cn("min-h-screen", inter.className)}>
+            {children}
+          </body>
+        </Providers>
+      </ClerkProvider>
     </html>
   );
 }
