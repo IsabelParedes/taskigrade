@@ -19,7 +19,7 @@ const Navbar = ({}) => {
 
       <div className="flex gap-4">
         <SignedIn>
-          <UserButton />
+          <UserButton afterSignOutUrl="/" />
         </SignedIn>
         <SignedOut>
           <SignInButton>
