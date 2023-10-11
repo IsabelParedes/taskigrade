@@ -33,7 +33,7 @@ const SearchCommand = ({}: SearchCommandProps) => {
       <Button
         variant="secondary"
         onClick={() => setOpen(true)}
-        className="w-full justify-between items-center hover:text-primary text-muted-foreground"
+        className="w-full justify-between items-center hover:text-foreground text-foreground/60"
       >
         <span className="flex gap-2 items-center">
           <Search />

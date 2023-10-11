@@ -1,5 +1,6 @@
 import Navbar from "@/components/NavBar";
 import Providers from "@/components/Providers";
+import SideNav from "@/components/sidenav/SideNav";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
