@@ -1,6 +1,6 @@
 "use client";
 
-import { Id, Task } from "@/temp/types";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
+import { Id, Task } from "@/types/types";
 
 interface KanbanCardProps {
   task: Task;
@@ -68,7 +69,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
   const EditContent = () => {
     return (
       <Input
-        value={task.content}
+        value={task.title}
         autoFocus
         placeholder="Enter task here..."
         onBlur={toggleEditMode}
@@ -97,7 +98,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           {task.id} */}
         </CardTitle>
       </CardHeader>
-      <CardContent>{editMode ? <EditContent /> : task.content}</CardContent>
+      <CardContent>{editMode ? <EditContent /> : task.title}</CardContent>
       <CardFooter className="justify-end">
         {editMode ? (
           <Button

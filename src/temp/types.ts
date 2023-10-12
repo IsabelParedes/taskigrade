@@ -1,4 +1,4 @@
-export type Id = string | number;
+/* export type Id = string | number;
 
 export type Column = {
   id: Id;
@@ -11,3 +11,4 @@ export type Task = {
   columnId: Id;
   content: string;
 };
+ */

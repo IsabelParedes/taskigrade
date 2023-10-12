@@ -1,6 +1,5 @@
 "use client";
 
-import { Id } from "@/temp/types";
 import { Plus } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -10,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { Id } from "@/types/types";
 
 interface KanbanHeaderProps {
   title: string;

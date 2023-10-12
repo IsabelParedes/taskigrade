@@ -1,4 +1,4 @@
-import { Column, Task } from "./types";
+import { Column, Task } from "@/types/types";
 
 export const dummyCols: Column[] = [
   {
@@ -22,68 +22,107 @@ export const dummyCols: Column[] = [
 export const dummyTasks: Task[] = [
   {
     id: "1",
-    columnId: "todo",
-    content: "List admin APIs for dashboard",
+    status: "todo",
+    createdById: 10,
+    initial: false,
+
+    title: "List admin APIs for dashboard",
   },
   {
     id: "2",
-    columnId: "todo",
-    content:
+    status: "todo",
+    createdById: 10,
+    initial: false,
+
+    title:
       "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
   },
   {
     id: "3",
-    columnId: "inprogress",
-    content: "Conduct security testing",
+    status: "inprogress",
+    createdById: 10,
+    initial: false,
+
+    title: "Conduct security testing",
   },
   {
     id: "4",
-    columnId: "inprogress",
-    content: "Analyze competitors",
+    status: "inprogress",
+    createdById: 10,
+    initial: false,
+
+    title: "Analyze competitors",
   },
   {
     id: "5",
-    columnId: "test",
-    content: "Create UI kit documentation",
+    status: "test",
+    createdById: 10,
+    initial: false,
+
+    title: "Create UI kit documentation",
   },
   {
     id: "6",
-    columnId: "test",
-    content: "Dev meeting",
+    status: "test",
+    createdById: 10,
+    initial: false,
+
+    title: "Dev meeting",
   },
   {
     id: "7",
-    columnId: "test",
-    content: "Deliver dashboard prototype",
+    status: "test",
+    createdById: 10,
+    initial: false,
+
+    title: "Deliver dashboard prototype",
   },
   {
     id: "8",
-    columnId: "complete",
-    content: "Optimize application performance",
+    status: "complete",
+    createdById: 10,
+    initial: false,
+
+    title: "Optimize application performance",
   },
   {
     id: "9",
-    columnId: "complete",
-    content: "Implement data validation",
+    status: "complete",
+    createdById: 10,
+    initial: false,
+
+    title: "Implement data validation",
   },
   {
     id: "10",
-    columnId: "complete",
-    content: "Design database schema",
+    status: "complete",
+    createdById: 10,
+    initial: false,
+
+    title: "Design database schema",
   },
   {
     id: "11",
-    columnId: "todo",
-    content: "Integrate SSL web certificates into workflow",
+    status: "todo",
+    createdById: 10,
+    initial: false,
+
+    title: "Integrate SSL web certificates into workflow",
   },
   {
     id: "12",
-    columnId: "inprogress",
-    content: "Implement error logging and monitoring",
+    status: "inprogress",
+    createdById: 10,
+    initial: false,
+
+    title: "Implement error logging and monitoring",
   },
   {
     id: "13",
-    columnId: "inprogress",
-    content: "Design and implement responsive UI",
+    status: "inprogress",
+    createdById: 10,
+    initial: false,
+
+    title: "Design and implement responsive UI",
   },
 ];

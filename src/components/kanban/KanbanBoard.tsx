@@ -1,7 +1,7 @@
 "use client";
 
 import { dummyCols, dummyTasks } from "@/temp/constants";
-import { Column, Id, Task } from "@/temp/types";
+import { Column, Id, Task } from "@/types/types";
 import {
   DndContext,
   DragOverEvent,
@@ -40,11 +40,13 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     const newTask: Task = {
       id: generateId(),
       initial: true,
-      columnId,
-      content: "",
+      status: columnId,
+      title: "",
+      createdById: 10, //TODO get active user id
     };
 
     setTasks([newTask, ...tasks]);
+    console.log("newTask", newTask);
   };
 
   const deleteTask = (id: Id) => {
@@ -109,7 +111,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
         const overIndex = tasks.findIndex((t) => t.id === overTaskId);
 
-        tasks[activeIndex].columnId = tasks[overIndex].columnId;
+        tasks[activeIndex].status = tasks[overIndex].status;
 
         return arrayMove(tasks, activeIndex, overIndex);
       });
@@ -121,7 +123,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
 
-        tasks[activeIndex].columnId = overTaskId;
+        tasks[activeIndex].id = overTaskId;
 
         // trigger a re-render
         return arrayMove(tasks, activeIndex, activeIndex);
@@ -140,7 +142,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
             <KanbanColumn
               key={col.id}
               column={col}
-              tasks={tasks.filter((task) => task.columnId === col.id)}
+              tasks={tasks.filter((task) => task.status === col.id)}
               deleteTask={deleteTask}
               updateTask={updateTask}
               createTask={createTask}
