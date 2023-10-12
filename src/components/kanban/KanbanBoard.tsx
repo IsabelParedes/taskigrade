@@ -54,12 +54,12 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     setTasks(filteredTasks);
   };
 
-  const updateTask = (id: Id, content: string) => {
+  const updateTask = (id: Id, title: string) => {
     const newTasks = tasks.map((task) => {
       if (task.id !== id) {
         return task;
       }
-      return { ...task, content };
+      return { ...task, title };
     });
 
     setTasks(newTasks);

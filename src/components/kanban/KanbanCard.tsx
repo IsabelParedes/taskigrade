@@ -1,6 +1,7 @@
 "use client";
 
-
+import { trpc } from "@/app/_trpc/client";
+import { Id, Task } from "@/types/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
@@ -14,7 +15,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
-import { Id, Task } from "@/types/types";
 
 interface KanbanCardProps {
   task: Task;
@@ -57,6 +57,18 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
     setEditMode((prev) => !prev);
   };
 
+  //upsert task
+  const { mutate: saveTask } = trpc.upsertTask.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+    onMutate: () => {
+      toggleEditMode();
+    },
+  });
   if (isDragging) {
     return (
       <div
@@ -100,13 +112,22 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       </CardHeader>
       <CardContent>{editMode ? <EditContent /> : task.title}</CardContent>
       <CardFooter className="justify-end">
-        {editMode ? (
+        {true ? (
           <Button
             aria-label="save new task"
             size={"sm"}
             variant={"outline"}
             className="bg-transparent hover:bg-destructive"
-            onClick={() => {}}
+            onClick={() => {
+              console.log("click");
+              saveTask({
+                title: task.title,
+                createdById: task.createdById,
+                initial: task.initial,
+                status: task.status as string,
+                description: task.description,
+              });
+            }}
           >
             Save
           </Button>

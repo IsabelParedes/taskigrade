@@ -1,9 +1,10 @@
 import { db } from "@/db/db";
-import { users } from "@/db/schema";
+import { tasks, users } from "@/db/schema";
+import { TaskValidator } from "@/lib/validators/taskValidator";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import { publicProcedure, router } from "./trpc";
+import { privateProcedure, publicProcedure, router } from "./trpc";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -24,6 +25,17 @@ export const appRouter = router({
 
     return { success: true };
   }),
+  upsertTask: privateProcedure
+    .input(TaskValidator)
+    .mutation(async ({ ctx, input }) => {
+      console.log("mutating");
+      await db.insert(tasks).values({
+        title: input.title,
+        status: input.status,
+        createdById: input.createdById,
+        initial: input.initial,
+      });
+    }),
 });
 // Export type router type signature,
 // NOT the router itself.

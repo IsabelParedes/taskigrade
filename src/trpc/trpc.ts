@@ -8,8 +8,9 @@ import { TRPCError, initTRPC } from "@trpc/server";
 const t = initTRPC.create();
 
 const isAuth = t.middleware(async ({ next }) => {
-  const { user } = auth();
-  if (!user) {
+  const { user, userId } = auth();
+  console.log("user", userId);
+  if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
