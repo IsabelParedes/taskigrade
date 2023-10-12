@@ -1,11 +1,11 @@
 import { db } from "@/db/db";
 import { TaskSelect, tasks, users } from "@/db/schema";
 import { TaskValidator } from "@/lib/validators/taskValidator";
+import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { privateProcedure, publicProcedure, router } from "./trpc";
-import { Task } from "@/types/types";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
