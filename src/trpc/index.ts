@@ -25,6 +25,7 @@ export const appRouter = router({
 
     return { success: true };
   }),
+
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ ctx, input }) => {
