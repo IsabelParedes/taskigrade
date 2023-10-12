@@ -1,5 +1,6 @@
 "use client";
 
+import { Id } from "@/temp/types";
 import { Plus } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -13,22 +14,31 @@ import {
 interface KanbanHeaderProps {
   title: string;
   count: number;
+  columnId: Id;
+  createTask: (columnId: Id) => void;
+
   // title: "to do" | "in progress" | "test" | "complete";
 }
 
-const KanbanHeader = ({ count, title }: KanbanHeaderProps) => {
+const KanbanHeader = ({
+  count,
+  title,
+  createTask,
+  columnId,
+}: KanbanHeaderProps) => {
   const handleClick = () => {
     console.log("click");
   };
 
   return (
     <div className="flex justify-between items-center">
-      {title} <Badge variant={"outline"}>{count}</Badge>
+      <Badge variant={"outline"}>{count}</Badge>
+      {title}
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onClick={handleClick}
+              onClick={() => createTask(columnId)}
               size={"icon"}
               variant={"ghost"}
               className="h-5 w-5"

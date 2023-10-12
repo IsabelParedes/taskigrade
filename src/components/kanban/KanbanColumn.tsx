@@ -12,6 +12,7 @@ interface KanbanColumnProps {
   tasks: Task[];
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
+  createTask: (columnId: Id) => void;
 }
 
 const KanbanColumn = ({
@@ -19,6 +20,7 @@ const KanbanColumn = ({
   tasks,
   deleteTask,
   updateTask,
+  createTask,
 }: KanbanColumnProps) => {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -47,7 +49,12 @@ const KanbanColumn = ({
       className="basis-1/4 border-0 cursor-auto"
     >
       <CardHeader className="capitalize text-center bg-secondary text-secondary-foreground shadow-lg rounded-lg">
-        <KanbanHeader title={column.title} count={tasks.length} />
+        <KanbanHeader
+          title={column.title}
+          count={tasks.length}
+          createTask={createTask}
+          columnId={column.id}
+        />
         <Separator />
       </CardHeader>
 

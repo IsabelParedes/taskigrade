@@ -4,7 +4,6 @@ import { dummyCols, dummyTasks } from "@/temp/constants";
 import { Column, Id, Task } from "@/temp/types";
 import {
   DndContext,
-  DragEndEvent,
   DragOverEvent,
   DragOverlay,
   DragStartEvent,
@@ -40,11 +39,12 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   const createTask = (columnId: Id) => {
     const newTask: Task = {
       id: generateId(),
+      initial: true,
       columnId,
-      content: `Task ${tasks.length + 1}`,
+      content: "",
     };
 
-    setTasks([...tasks, newTask]);
+    setTasks([newTask, ...tasks]);
   };
 
   const deleteTask = (id: Id) => {
@@ -143,6 +143,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
               tasks={tasks.filter((task) => task.columnId === col.id)}
               deleteTask={deleteTask}
               updateTask={updateTask}
+              createTask={createTask}
             />
           ))}
         </SortableContext>

@@ -3,8 +3,8 @@
 import { Id, Task } from "@/temp/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Hash, Trash } from "lucide-react";
-import { useState } from "react";
+import { Trash } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -22,8 +22,14 @@ interface KanbanCardProps {
 }
 
 const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
-  const [mouseIsOver, setMouseIsOver] = useState(false);
+  //const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    if (task.initial) {
+      setEditMode(true);
+    }
+  }, [task.initial]);
 
   const {
     setNodeRef,
@@ -46,8 +52,8 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
   };
 
   const toggleEditMode = () => {
+    task.initial = false;
     setEditMode((prev) => !prev);
-    setMouseIsOver(false);
   };
 
   if (isDragging) {
@@ -59,37 +65,22 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       />
     );
   }
-
-  if (editMode) {
+  const EditContent = () => {
     return (
-      <Card
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-        {...listeners}
-        onClick={toggleEditMode}
-        className="cursor-grab"
-      >
-        <CardHeader>
-          <CardTitle>{task.id}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Input
-            value={task.content}
-            autoFocus
-            placeholder="Enter task here..."
-            onBlur={toggleEditMode}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && e.shiftKey) {
-                toggleEditMode;
-              }
-            }}
-            onChange={(e) => updateTask(task.id, e.target.value)}
-          />
-        </CardContent>
-      </Card>
+      <Input
+        value={task.content}
+        autoFocus
+        placeholder="Enter task here..."
+        onBlur={toggleEditMode}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && e.shiftKey) {
+            toggleEditMode();
+          }
+        }}
+        onChange={(e) => updateTask(task.id, e.target.value)}
+      />
     );
-  }
+  };
 
   return (
     <Card
@@ -102,23 +93,35 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
     >
       <CardHeader>
         <CardTitle className="flex">
-          <Hash />
-          {task.id}
+          {/* <Hash />
+          {task.id} */}
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-sm">{task.content}</CardContent>
+      <CardContent>{editMode ? <EditContent /> : task.content}</CardContent>
       <CardFooter className="justify-end">
-        <Button
-          aria-label="delete task"
-          size={"icon"}
-          variant={"outline"}
-          className="h-6 w-6 bg-transparent hover:bg-destructive"
-          onClick={() => {
-            deleteTask(task.id);
-          }}
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
+        {editMode ? (
+          <Button
+            aria-label="save new task"
+            size={"sm"}
+            variant={"outline"}
+            className="bg-transparent hover:bg-destructive"
+            onClick={() => {}}
+          >
+            Save
+          </Button>
+        ) : (
+          <Button
+            aria-label="delete task"
+            size={"sm"}
+            variant={"outline"}
+            className="bg-transparent hover:bg-destructive"
+            onClick={() => {
+              deleteTask(task.id);
+            }}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

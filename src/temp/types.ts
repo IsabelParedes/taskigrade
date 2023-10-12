@@ -7,6 +7,7 @@ export type Column = {
 
 export type Task = {
   id: Id;
+  initial?: boolean;
   columnId: Id;
   content: string;
 };
