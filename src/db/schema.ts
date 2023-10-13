@@ -29,5 +29,6 @@ export const tasksRelation = relations(tasks, ({ one }) => ({
   }),
 }));
 
-export type User = typeof users.$inferSelect;
-export type TaskSelect = typeof tasks.$inferSelect;
+/* export type User = typeof users.$inferSelect;
+export type Task = typeof tasks.$inferSelect;
+ */
