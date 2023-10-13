@@ -1,5 +1,5 @@
 import { db } from "@/db/db";
-import { tasks, users } from "@/db/schema";
+import { TaskSelect, tasks, users } from "@/db/schema";
 import { TaskValidator } from "@/lib/validators/taskValidator";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
@@ -24,6 +24,13 @@ export const appRouter = router({
     }
 
     return { success: true };
+  }),
+  getUsersTasks: privateProcedure.query(async ({ ctx }) => {
+    const usersTasks: TaskSelect[] = await db.query.tasks.findMany({
+      where: eq(tasks.createdById, ctx.userId.id),
+    });
+
+    return usersTasks;
   }),
   upsertTask: privateProcedure
     .input(TaskValidator)

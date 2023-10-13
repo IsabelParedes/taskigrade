@@ -1,5 +1,7 @@
 "use client";
 
+import { trpc } from "@/app/_trpc/client";
+import { TaskSelect } from "@/db/schema";
 import { dummyCols, dummyTasks } from "@/temp/constants";
 import { Column, Id, Task } from "@/types/types";
 import {
@@ -12,7 +14,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanCard from "./KanbanCard";
 import KanbanColumn from "./KanbanColumn";
@@ -121,15 +123,32 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     // drop task on column
     if (isActiveATask && isOverAColumn) {
       setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
+        const activeIndex = tasks.findIndex((t) => {
+          return t.id === activeTaskId;
+        });
 
-        tasks[activeIndex].id = overTaskId;
+        tasks[activeIndex].status = overTaskId;
 
         // trigger a re-render
         return arrayMove(tasks, activeIndex, activeIndex);
       });
     }
   };
+
+  const { data: usersTasks, isLoading, error } = trpc.getUsersTasks.useQuery();
+
+  useEffect(() => {
+    setTasks(usersTasks as Task[]);
+  }, [usersTasks]);
+
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something went wrong... {error.message}</div>;
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -142,7 +161,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
             <KanbanColumn
               key={col.id}
               column={col}
-              tasks={tasks.filter((task) => task.status === col.id)}
+              tasks={usersTasks.filter((task) => task.status === col.id)}
               deleteTask={deleteTask}
               updateTask={updateTask}
               createTask={createTask}
@@ -156,7 +175,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
           <DragOverlay>
             {activeTask ? (
               <KanbanCard
-                task={activeTask}
+                task={activeTask as TaskSelect}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
               />

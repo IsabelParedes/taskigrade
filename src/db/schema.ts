@@ -14,12 +14,12 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const tasks = sqliteTable("tasks", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
-  status: text("category").notNull(),
+  status: text("status").notNull(),
   createdById: integer("created_by_id").notNull(),
   initial: integer("initial", { mode: "boolean" }).notNull(),
   description: text("description"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer("created_at", { mode: "timestamp" }),
+  updatedAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const tasksRelation = relations(tasks, ({ one }) => ({
@@ -29,6 +29,5 @@ export const tasksRelation = relations(tasks, ({ one }) => ({
   }),
 }));
 
-/* export type User = typeof users.$inferSelect;
-export type Task = typeof tasks.$inferSelect;
- */
+export type User = typeof users.$inferSelect;
+export type TaskSelect = typeof tasks.$inferSelect;
