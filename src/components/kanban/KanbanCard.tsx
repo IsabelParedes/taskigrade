@@ -18,7 +18,7 @@ import { Input } from "../ui/input";
 import { TaskSelect } from "@/db/schema";
 
 interface KanbanCardProps {
-  task: TaskSelect;
+  task: Task;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
 }

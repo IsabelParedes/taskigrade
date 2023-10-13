@@ -1,8 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { TaskSelect } from "@/db/schema";
-import { dummyCols, dummyTasks } from "@/temp/constants";
+import { dummyCols } from "@/temp/constants";
 import { Column, Id, Task } from "@/types/types";
 import {
   DndContext,
@@ -22,7 +21,6 @@ import KanbanColumn from "./KanbanColumn";
 interface KanbanBoardProps {}
 
 const KanbanBoard = ({}: KanbanBoardProps) => {
-  const [tasks, setTasks] = useState<Task[]>(dummyTasks);
   const [columns, setColumns] = useState<Column[]>(dummyCols);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -37,6 +35,27 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       },
     })
   );
+
+  const {
+    data: usersTasks,
+    isLoading,
+    error,
+  } = trpc.getUsersTasks.useQuery(undefined, {
+    placeholderData: [],
+  });
+  const [tasks, setTasks] = useState<Task[]>(usersTasks || []);
+
+  useEffect(() => {
+    setTasks(usersTasks as Task[]);
+  }, [usersTasks]);
+
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something went wrong... {error.message}</div>;
+  }
 
   const createTask = (columnId: Id) => {
     const newTask: Task = {
@@ -135,20 +154,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     }
   };
 
-  const { data: usersTasks, isLoading, error } = trpc.getUsersTasks.useQuery();
-
-  useEffect(() => {
-    setTasks(usersTasks as Task[]);
-  }, [usersTasks]);
-
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something went wrong... {error.message}</div>;
-  }
-
   return (
     <DndContext
       sensors={sensors}
@@ -161,7 +166,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
             <KanbanColumn
               key={col.id}
               column={col}
-              tasks={usersTasks.filter((task) => task.status === col.id)}
+              tasks={tasks.filter((task) => task.status === col.id)}
               deleteTask={deleteTask}
               updateTask={updateTask}
               createTask={createTask}
@@ -175,7 +180,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
           <DragOverlay>
             {activeTask ? (
               <KanbanCard
-                task={activeTask as TaskSelect}
+                task={activeTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
               />

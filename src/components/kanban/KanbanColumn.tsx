@@ -10,7 +10,7 @@ import { TaskSelect } from "@/db/schema";
 interface KanbanColumnProps {
   //title: "to do" | "in progress" | "test" | "complete";
   column: Column;
-  tasks: TaskSelect[];
+  tasks: Task[];
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
   createTask: (columnId: Id) => void;

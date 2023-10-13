@@ -5,6 +5,7 @@ import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { privateProcedure, publicProcedure, router } from "./trpc";
+import { Task } from "@/types/types";
 
 export const appRouter = router({
   authCallback: publicProcedure.query(async () => {
@@ -30,7 +31,7 @@ export const appRouter = router({
       where: eq(tasks.createdById, ctx.userId.id),
     });
 
-    return usersTasks;
+    return usersTasks as Task[];
   }),
   upsertTask: privateProcedure
     .input(TaskValidator)
