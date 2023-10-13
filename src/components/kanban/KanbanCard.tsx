@@ -15,7 +15,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
-import { TaskSelect } from "@/db/schema";
 
 interface KanbanCardProps {
   task: Task;

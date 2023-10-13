@@ -1,5 +1,5 @@
 import { db } from "@/db/db";
-import { TaskSelect, tasks, users } from "@/db/schema";
+import { tasks, users } from "@/db/schema";
 import { TaskValidator } from "@/lib/validators/taskValidator";
 import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
@@ -27,7 +27,7 @@ export const appRouter = router({
     return { success: true };
   }),
   getUsersTasks: privateProcedure.query(async ({ ctx }) => {
-    const usersTasks: TaskSelect[] = await db.query.tasks.findMany({
+    const usersTasks = await db.query.tasks.findMany({
       where: eq(tasks.createdById, ctx.userId.id),
     });
 
