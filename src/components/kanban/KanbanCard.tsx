@@ -79,6 +79,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       toggleEditMode();
     },
   });
+
   if (isDragging) {
     return (
       <div
@@ -97,6 +98,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
         onBlur={toggleEditMode}
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
+            console.log("shift enter");
             toggleEditMode();
           }
         }}
@@ -111,8 +113,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      onClick={toggleEditMode}
-      className="cursor-grab hover:bg-accent/80"
+      className="cursor-grab bg-secondary hover:bg-accent"
     >
       <CardHeader>
         <CardTitle className="flex">
@@ -120,40 +121,50 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           {task.id} */}
         </CardTitle>
       </CardHeader>
-      <CardContent>{editMode ? <EditContent /> : task.title}</CardContent>
-      <CardFooter className="justify-end">
-        {true ? (
-          <Button
-            aria-label="save new task"
-            size={"sm"}
-            variant={"outline"}
-            className="bg-transparent hover:bg-destructive"
-            onClick={() => {
-              console.log("click");
-              saveTask({
-                title: task.title,
-                createdById: task.createdById,
-                initial: task.initial,
-                status: task.status as string,
-                description: task.description,
-              });
-            }}
-          >
-            Save
-          </Button>
-        ) : (
-          <Button
-            aria-label="delete task"
-            size={"sm"}
-            variant={"outline"}
-            className="bg-transparent hover:bg-destructive"
-            onClick={() => {
-              deleteTask(task.id);
-            }}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
+      <CardContent
+        onClick={() => {
+          console.log("tjos");
+          toggleEditMode();
+        }}
+      >
+        {editMode ? <EditContent /> : task.title}
+      </CardContent>
+      <CardFooter className="justify-between">
+        <Button
+          key={`save ${task.id}`}
+          aria-label="save new task"
+          size={"sm"}
+          variant={"outline"}
+          className="bg-transparent hover:bg-secondary"
+          onClick={() => {
+            console.log("click");
+            toggleEditMode();
+            saveTask({
+              id: task.id as string,
+              title: task.title,
+              createdById: task.createdById,
+              initial: task.initial,
+              status: task.status as string,
+              description: task.description,
+            });
+          }}
+        >
+          Save
+        </Button>
+
+        <Button
+          key={`delete ${task.id}`}
+          aria-label="delete task"
+          size={"sm"}
+          variant={"outline"}
+          className="bg-transparent hover:bg-destructive"
+          onClick={() => {
+            console.log("fel");
+            deleteTask(task.id);
+          }}
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
       </CardFooter>
     </Card>
   );
