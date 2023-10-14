@@ -26,8 +26,8 @@ export default function RootLayout({
           <body className={cn("min-h-screen", inter.className)}>
             <Navbar />
             {children}
+            <ReactQueryDevtools initialIsOpen={false} />
           </body>
-          <ReactQueryDevtools initialIsOpen={false} />
         </Providers>
       </ClerkProvider>
     </html>
