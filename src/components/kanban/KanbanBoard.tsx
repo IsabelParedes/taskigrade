@@ -21,10 +21,25 @@ import KanbanColumn from "./KanbanColumn";
 interface KanbanBoardProps {}
 
 const KanbanBoard = ({}: KanbanBoardProps) => {
-  const [columns, setColumns] = useState<Column[]>(dummyCols);
+  /*   const { user } = useUser();
 
+  useEffect(() => {
+    if (!user) {
+      console.log("user", user);
+      //TODO change redirect
+      if (typeof window !== undefined) {
+        console.log("kanban window redirect");
+        redirect("/");
+      }
+    }
+  }, [user]); */
+
+  const [columns, setColumns] = useState<Column[]>(dummyCols);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const utils = trpc.useContext();
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -43,12 +58,13 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   } = trpc.getUsersTasks.useQuery(undefined, {
     placeholderData: [],
   });
-  const [tasks, setTasks] = useState<Task[]>(usersTasks || []);
 
   useEffect(() => {
+    console.log("task effect");
     setTasks(usersTasks as Task[]);
   }, [usersTasks]);
 
+  //TODO make real loading/error UIs
   if (isLoading) {
     return <div>loading...</div>;
   }
@@ -58,17 +74,36 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   }
 
   const createTask = (columnId: Id) => {
+    console.log("create");
     const newTask: Task = {
       id: generateId(),
-      initial: true,
       status: columnId,
-      title: "",
-      createdById: 10, //TODO get active user id
+      title: `Task ${tasks.length + 1}`,
+      initial: true,
+      createdById: "user_2WcBOPKCCP8hGZFPORhb1GB1PuU",
     };
 
-    setTasks([newTask, ...tasks]);
     console.log("newTask", newTask);
+
+    setTasks([newTask, ...tasks]);
+    console.log("tasks", tasks);
   };
+
+  /* const saveTask = (columnId: Id) => {
+    const newTask: TaskInsert = {
+      initial: true,
+      status: columnId as string,
+      title: "",
+      createdById: user?.id, //TODO get active user id
+    };
+
+    const {} = trpc.upsertTask.useMutation({
+      onSuccess: () => {
+        utils.getUsersTasks.invalidate();
+      },
+    });
+    console.log("newTask", newTask);
+  }; */
 
   const deleteTask = (id: Id) => {
     const filteredTasks = tasks.filter((task) => task.id !== id);
