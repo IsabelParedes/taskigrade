@@ -25,14 +25,12 @@ interface KanbanCardProps {
 }
 
 const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
-  //const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
   const utils = trpc.useContext();
 
   const { userId } = useAuth();
   if (!userId) {
-    console.log("kanban redirect");
     redirect("/");
   }
 
@@ -71,6 +69,7 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
   const { mutate: saveTask } = trpc.upsertTask.useMutation({
     onSuccess: () => {
       console.log("success");
+      utils.getUsersTasks.invalidate();
     },
     onError: () => {
       console.log("error");
@@ -103,7 +102,6 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
         placeholder="Enter task here..."
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
-            console.log("shift enter");
             saveTask({
               id: task.id as string,
               title: task.title,
@@ -128,14 +126,10 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
       className="cursor-grab bg-secondary hover:bg-accent/80"
     >
       <CardHeader>
-        <CardTitle className="flex">
-          {/* <Hash />
-          {task.id} */}
-        </CardTitle>
+        <CardTitle className="flex"></CardTitle>
       </CardHeader>
       <CardContent
         onClick={() => {
-          console.log("tjos");
           toggleEditMode();
         }}
       >
@@ -149,7 +143,6 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
           variant={"outline"}
           className="bg-transparent hover:bg-secondary"
           onClick={() => {
-            console.log("click");
             saveTask({
               id: task.id as string,
               title: task.title,

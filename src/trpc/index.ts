@@ -5,6 +5,7 @@ import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
 export const appRouter = router({
@@ -35,8 +36,7 @@ export const appRouter = router({
   }),
   upsertTask: privateProcedure
     .input(TaskValidator)
-    .mutation(async ({ ctx, input }) => {
-      console.log("mutating", input);
+    .mutation(async ({ input }) => {
       await db
         .insert(tasks)
         .values({
@@ -50,6 +50,15 @@ export const appRouter = router({
           target: tasks.id,
           set: { title: input.title, status: input.status },
         });
+    }),
+  deleteTask: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db.delete(tasks).where(eq(tasks.id, input.id));
     }),
 });
 // Export type router type signature,
