@@ -145,54 +145,26 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
 
     // drop task on task
     if (isActiveATask && isOverATask) {
-      setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
-        const overIndex = tasks.findIndex((t) => t.id === overTaskId);
+      const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
+      const overIndex = tasks.findIndex((t) => t.id === overTaskId);
 
-        updateStatus({
-          id: tasks[activeIndex].id as string,
-          createdById: tasks[activeIndex].createdById,
-          initial: tasks[activeIndex].initial,
-          title: tasks[activeIndex].title,
-          status: tasks[overIndex].status as string,
-        });
-        // tasks[activeIndex].status = tasks[overIndex].status;
-        return tasks;
-        //   return arrayMove(tasks, activeIndex, overIndex);
+      updateStatus({
+        id: tasks[activeIndex].id as string,
+        createdById: tasks[activeIndex].createdById,
+        initial: tasks[activeIndex].initial,
+        title: tasks[activeIndex].title,
+        status: tasks[overIndex].status as string,
       });
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
     // drop task on column
-    console.log("isActiveATask", isActiveATask);
-    console.log("isOverAColumn", isOverAColumn);
+
     if (isActiveATask && isOverAColumn) {
-      console.log("should happen");
-      /* setTasks((tasks) => {
-        const activeIndex = tasks.findIndex((t) => {
-          return t.id === activeTaskId;
-        });
-
-        updateStatus({
-          id: tasks[activeIndex].id as string,
-          createdById: tasks[activeIndex].createdById,
-          initial: tasks[activeIndex].initial,
-          title: tasks[activeIndex].title,
-          status: overTaskId as string,
-        });
-        //tasks[activeIndex].status = overTaskId;
-
-        // trigger a re-render
-        return tasks;
-        //  return arrayMove(tasks, activeIndex, activeIndex);
-      }); */
       const activeIndex = tasks.findIndex((t) => {
         return t.id === activeTaskId;
       });
 
-      console.log("activeIndex", activeIndex);
-      console.log("activeTaskId", activeTaskId);
-      console.log("overTaskId", overTaskId);
       updateStatus({
         id: tasks[activeIndex].id as string,
         createdById: tasks[activeIndex].createdById,
