@@ -3,6 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 import { dummyCols } from "@/temp/constants";
 import { Column, Id, Task } from "@/types/types";
+import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
   DragOverEvent,
@@ -13,6 +14,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanCard from "./KanbanCard";
@@ -21,25 +23,16 @@ import KanbanColumn from "./KanbanColumn";
 interface KanbanBoardProps {}
 
 const KanbanBoard = ({}: KanbanBoardProps) => {
-  /*   const { user } = useUser();
-
-  useEffect(() => {
-    if (!user) {
-      console.log("user", user);
-      //TODO change redirect
-      if (typeof window !== undefined) {
-        console.log("kanban window redirect");
-        redirect("/");
-      }
-    }
-  }, [user]); */
+  const { userId } = useAuth();
+  if (!userId) {
+    console.log("kanban redirect");
+    redirect("/");
+  }
 
   const [columns, setColumns] = useState<Column[]>(dummyCols);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const utils = trpc.useContext();
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -78,9 +71,9 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     const newTask: Task = {
       id: generateId(),
       status: columnId,
-      title: `Task ${tasks.length + 1}`,
+      title: "",
       initial: true,
-      createdById: "user_2WcBOPKCCP8hGZFPORhb1GB1PuU",
+      createdById: userId,
     };
 
     console.log("newTask", newTask);
@@ -88,22 +81,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     setTasks([newTask, ...tasks]);
     console.log("tasks", tasks);
   };
-
-  /* const saveTask = (columnId: Id) => {
-    const newTask: TaskInsert = {
-      initial: true,
-      status: columnId as string,
-      title: "",
-      createdById: user?.id, //TODO get active user id
-    };
-
-    const {} = trpc.upsertTask.useMutation({
-      onSuccess: () => {
-        utils.getUsersTasks.invalidate();
-      },
-    });
-    console.log("newTask", newTask);
-  }; */
 
   const deleteTask = (id: Id) => {
     const filteredTasks = tasks.filter((task) => task.id !== id);
