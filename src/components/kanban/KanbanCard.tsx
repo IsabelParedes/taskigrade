@@ -2,9 +2,11 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { Id, Task } from "@/types/types";
+import { useAuth } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -25,6 +27,14 @@ interface KanbanCardProps {
 const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
   //const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  const utils = trpc.useContext();
+
+  const { userId } = useAuth();
+  if (!userId) {
+    console.log("kanban redirect");
+    redirect("/");
+  }
 
   useEffect(() => {
     if (task.initial) {
