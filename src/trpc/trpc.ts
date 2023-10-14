@@ -29,7 +29,7 @@ const isAuth = t.middleware(async ({ next }) => {
 
   // context returns value from middleware into the private api route
   return next({
-    ctx: { user, userId },
+    ctx: { user, clerkId, userId },
   });
 });
 
