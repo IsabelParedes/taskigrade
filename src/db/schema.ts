@@ -12,14 +12,14 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const tasks = sqliteTable("tasks", {
-  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  id: text("id").primaryKey(),
   title: text("title").notNull(),
   status: text("status").notNull(),
   createdById: text("created_by_id").notNull(),
   initial: integer("initial", { mode: "boolean" }).notNull(),
   description: text("description"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const tasksRelation = relations(tasks, ({ one }) => ({
