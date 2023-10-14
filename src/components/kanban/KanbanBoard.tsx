@@ -1,7 +1,8 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { dummyCols } from "@/temp/constants";
+
+import { statusCols } from "@/lib/constants";
 import { Column, Id, Task } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import {
@@ -29,7 +30,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     redirect("/");
   }
 
-  const [columns, setColumns] = useState<Column[]>(dummyCols);
+  const [columns, setColumns] = useState<Column[]>(statusCols);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -175,6 +176,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
 
   return (
     <DndContext
+      id="unique-dnd-context-id"
       sensors={sensors}
       onDragStart={onDragStart}
       onDragOver={onDragOver}
