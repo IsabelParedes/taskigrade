@@ -24,7 +24,7 @@ interface KanbanCardProps {
   updateTask: (id: Id, content: string) => void;
 }
 
-const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
+const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
   //const [mouseIsOver, setMouseIsOver] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
@@ -80,6 +80,12 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
     },
   });
 
+  const { mutate: deleteTask } = trpc.deleteTask.useMutation({
+    onSuccess: () => {
+      utils.getUsersTasks.invalidate();
+    },
+  });
+
   if (isDragging) {
     return (
       <div
@@ -95,11 +101,17 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
         value={task.title}
         autoFocus
         placeholder="Enter task here..."
-        onBlur={toggleEditMode}
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
             console.log("shift enter");
-            toggleEditMode();
+            saveTask({
+              id: task.id as string,
+              title: task.title,
+              createdById: task.createdById,
+              initial: false,
+              status: task.status as string,
+              description: task.description,
+            });
           }
         }}
         onChange={(e) => updateTask(task.id, e.target.value)}
@@ -113,7 +125,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
       style={style}
       {...attributes}
       {...listeners}
-      className="cursor-grab bg-secondary hover:bg-accent"
+      className="cursor-grab bg-secondary hover:bg-accent/80"
     >
       <CardHeader>
         <CardTitle className="flex">
@@ -138,12 +150,11 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           className="bg-transparent hover:bg-secondary"
           onClick={() => {
             console.log("click");
-            toggleEditMode();
             saveTask({
               id: task.id as string,
               title: task.title,
               createdById: task.createdById,
-              initial: task.initial,
+              initial: false,
               status: task.status as string,
               description: task.description,
             });
@@ -160,7 +171,7 @@ const KanbanCard = ({ task, deleteTask, updateTask }: KanbanCardProps) => {
           className="bg-transparent hover:bg-destructive"
           onClick={() => {
             console.log("fel");
-            deleteTask(task.id);
+            deleteTask({ id: task.id as string });
           }}
         >
           <Trash className="h-4 w-4" />
