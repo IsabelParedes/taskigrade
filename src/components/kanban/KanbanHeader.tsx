@@ -26,10 +26,6 @@ const KanbanHeader = ({
   createTask,
   columnId,
 }: KanbanHeaderProps) => {
-  const handleClick = () => {
-    console.log("click");
-  };
-
   return (
     <div className="flex justify-between items-center">
       <Badge variant={"outline"}>{count}</Badge>

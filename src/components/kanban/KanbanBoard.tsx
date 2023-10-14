@@ -56,7 +56,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
 
   const { mutate: updateStatus } = trpc.upsertTask.useMutation({
     onSuccess: () => {
-      console.log("invalid");
       utils.getUsersTasks.invalidate();
     },
   });
@@ -87,8 +86,8 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   };
 
   const deleteTask = (id: Id) => {
-    const filteredTasks = tasks.filter((task) => task.id !== id);
-    setTasks(filteredTasks);
+    /* const filteredTasks = tasks.filter((task) => task.id !== id);
+    setTasks(filteredTasks); */
   };
 
   const updateTask = (id: Id, title: string) => {
@@ -125,7 +124,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       return;
     }
 
-    console.log("over", over);
     const activeTaskId = active.id;
     const overTaskId = over.id;
 
