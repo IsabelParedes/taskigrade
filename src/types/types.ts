@@ -9,7 +9,7 @@ export type Task = {
   id: Id;
   title: string;
   status: Id;
-  createdById: number;
+  createdById: string;
   initial: boolean;
   description?: string;
 };

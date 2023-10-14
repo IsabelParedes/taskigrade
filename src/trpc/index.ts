@@ -28,7 +28,7 @@ export const appRouter = router({
   }),
   getUsersTasks: privateProcedure.query(async ({ ctx }) => {
     const usersTasks = await db.query.tasks.findMany({
-      where: eq(tasks.createdById, ctx.userId.id),
+      where: eq(tasks.createdById, ctx.clerkId),
     });
 
     return usersTasks as Task[];
