@@ -99,6 +99,7 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
       <Input
         value={task.title}
         autoFocus
+        onBlur={() => setEditMode(false)}
         placeholder="Enter task here..."
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.shiftKey) {
@@ -129,46 +130,52 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
         <CardTitle className="flex"></CardTitle>
       </CardHeader>
       <CardContent
+        onMouseDown={(e) => e.preventDefault()}
         onClick={() => {
           toggleEditMode();
         }}
       >
         {editMode ? <EditContent /> : task.title}
       </CardContent>
-      <CardFooter className="justify-between">
-        <Button
-          key={`save ${task.id}`}
-          aria-label="save new task"
-          size={"sm"}
-          variant={"outline"}
-          className="bg-transparent hover:bg-secondary"
-          onClick={() => {
-            saveTask({
-              id: task.id as string,
-              title: task.title,
-              createdById: task.createdById,
-              initial: false,
-              status: task.status as string,
-              description: task.description,
-            });
-          }}
-        >
-          Save
-        </Button>
-
-        <Button
-          key={`delete ${task.id}`}
-          aria-label="delete task"
-          size={"sm"}
-          variant={"outline"}
-          className="bg-transparent hover:bg-destructive"
-          onClick={() => {
-            console.log("fel");
-            deleteTask({ id: task.id as string });
-          }}
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
+      <CardFooter className="justify-end">
+        {editMode ? (
+          <Button
+            key={`save ${task.id}`}
+            aria-label="save new task"
+            size={"sm"}
+            variant={"outline"}
+            className="bg-transparent hover:bg-secondary"
+            onMouseDown={(e) =>
+              // need this so onClick fires before inputs onBlur
+              e.preventDefault()
+            }
+            onClick={() => {
+              saveTask({
+                id: task.id as string,
+                title: task.title,
+                createdById: task.createdById,
+                initial: false,
+                status: task.status as string,
+                description: task.description,
+              });
+            }}
+          >
+            Save
+          </Button>
+        ) : (
+          <Button
+            key={`delete ${task.id}`}
+            aria-label="delete task"
+            size={"sm"}
+            variant={"outline"}
+            className="bg-transparent hover:bg-destructive"
+            onClick={() => {
+              deleteTask({ id: task.id as string });
+            }}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
