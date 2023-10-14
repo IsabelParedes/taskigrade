@@ -14,6 +14,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -66,7 +67,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
 
   const createTask = (columnId: Id) => {
     const newTask: Task = {
-      id: generateId(),
+      id: createId(),
       status: columnId,
       title: "",
       initial: true,
