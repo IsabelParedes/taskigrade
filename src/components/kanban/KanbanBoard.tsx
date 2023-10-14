@@ -25,7 +25,6 @@ interface KanbanBoardProps {}
 const KanbanBoard = ({}: KanbanBoardProps) => {
   const { userId } = useAuth();
   if (!userId) {
-    console.log("kanban redirect");
     redirect("/");
   }
 
@@ -53,7 +52,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   });
 
   useEffect(() => {
-    console.log("task effect");
     setTasks(usersTasks as Task[]);
   }, [usersTasks]);
 
@@ -67,7 +65,6 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   }
 
   const createTask = (columnId: Id) => {
-    console.log("create");
     const newTask: Task = {
       id: generateId(),
       status: columnId,
@@ -76,10 +73,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       createdById: userId,
     };
 
-    console.log("newTask", newTask);
-
     setTasks([newTask, ...tasks]);
-    console.log("tasks", tasks);
   };
 
   const deleteTask = (id: Id) => {
