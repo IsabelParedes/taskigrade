@@ -36,7 +36,7 @@ export const appRouter = router({
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ ctx, input }) => {
-      console.log("mutating");
+      console.log("mutating", input);
       await db
         .insert(tasks)
         .values({
@@ -46,7 +46,10 @@ export const appRouter = router({
           createdById: input.createdById,
           initial: input.initial,
         })
-        .onConflictDoUpdate({ target: tasks.id, set: { title: input.title } });
+        .onConflictDoUpdate({
+          target: tasks.id,
+          set: { title: input.title, status: input.status },
+        });
     }),
 });
 // Export type router type signature,

@@ -13,7 +13,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { SortableContext } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
@@ -36,6 +36,8 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
+  const utils = trpc.useContext();
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -50,6 +52,13 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     error,
   } = trpc.getUsersTasks.useQuery(undefined, {
     placeholderData: [],
+  });
+
+  const { mutate: updateStatus } = trpc.upsertTask.useMutation({
+    onSuccess: () => {
+      console.log("invalid");
+      utils.getUsersTasks.invalidate();
+    },
   });
 
   useEffect(() => {
@@ -116,6 +125,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       return;
     }
 
+    console.log("over", over);
     const activeTaskId = active.id;
     const overTaskId = over.id;
 
@@ -139,24 +149,56 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
         const overIndex = tasks.findIndex((t) => t.id === overTaskId);
 
-        tasks[activeIndex].status = tasks[overIndex].status;
-
-        return arrayMove(tasks, activeIndex, overIndex);
+        updateStatus({
+          id: tasks[activeIndex].id as string,
+          createdById: tasks[activeIndex].createdById,
+          initial: tasks[activeIndex].initial,
+          title: tasks[activeIndex].title,
+          status: tasks[overIndex].status as string,
+        });
+        // tasks[activeIndex].status = tasks[overIndex].status;
+        return tasks;
+        //   return arrayMove(tasks, activeIndex, overIndex);
       });
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
     // drop task on column
+    console.log("isActiveATask", isActiveATask);
+    console.log("isOverAColumn", isOverAColumn);
     if (isActiveATask && isOverAColumn) {
-      setTasks((tasks) => {
+      console.log("should happen");
+      /* setTasks((tasks) => {
         const activeIndex = tasks.findIndex((t) => {
           return t.id === activeTaskId;
         });
 
-        tasks[activeIndex].status = overTaskId;
+        updateStatus({
+          id: tasks[activeIndex].id as string,
+          createdById: tasks[activeIndex].createdById,
+          initial: tasks[activeIndex].initial,
+          title: tasks[activeIndex].title,
+          status: overTaskId as string,
+        });
+        //tasks[activeIndex].status = overTaskId;
 
         // trigger a re-render
-        return arrayMove(tasks, activeIndex, activeIndex);
+        return tasks;
+        //  return arrayMove(tasks, activeIndex, activeIndex);
+      }); */
+      const activeIndex = tasks.findIndex((t) => {
+        return t.id === activeTaskId;
+      });
+
+      console.log("activeIndex", activeIndex);
+      console.log("activeTaskId", activeTaskId);
+      console.log("overTaskId", overTaskId);
+      updateStatus({
+        id: tasks[activeIndex].id as string,
+        createdById: tasks[activeIndex].createdById,
+        initial: tasks[activeIndex].initial,
+        title: tasks[activeIndex].title,
+        status: overTaskId as string,
       });
     }
   };
