@@ -7,16 +7,20 @@ import { Column, Id, Task } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
+  DragEndEvent,
   DragOverEvent,
+  DragOverlay,
   DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
+import KanbanCard from "./KanbanCard";
 import KanbanColumn from "./KanbanColumn";
 
 interface KanbanBoardProps {}
@@ -52,7 +56,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     placeholderData: [],
   });
 
-  const { mutate: updateStatus } = trpc.upsertTask.useMutation({
+  const { mutate: updateStatus } = trpc.updateStatus.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
     },
@@ -65,17 +69,28 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   });
 
   useEffect(() => {
-    setTasks(usersTasks as Task[]);
+    const arrayIdsOrder = JSON.parse(localStorage.getItem("taskOrder")!);
+
+    if (!arrayIdsOrder && usersTasks?.length) {
+      const idsOrderArray = usersTasks.map((t) => t.id);
+      localStorage.setItem("taskOrder", JSON.stringify(idsOrderArray));
+    }
+
+    let myArray;
+    if (arrayIdsOrder?.length && usersTasks?.length) {
+      myArray = arrayIdsOrder.map((taskId: string) => {
+        return usersTasks.find((task) => task.id === taskId);
+      });
+
+      const newItems = usersTasks.filter((task) => {
+        return !arrayIdsOrder.includes(task.id);
+      });
+
+      if (newItems?.length) myArray = [...newItems, ...myArray];
+    }
+
+    setTasks(myArray || (usersTasks as Task[]));
   }, [usersTasks]);
-
-  //TODO make real loading/error UIs
-  if (isLoading) {
-    return <div>loading...</div>;
-  }
-
-  if (error) {
-    return <div>Something went wrong... {error.message}</div>;
-  }
 
   const createTask = (columnId: Id) => {
     const newTask: Task = {
@@ -154,48 +169,61 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
       const overIndex = tasks.findIndex((t) => t.id === overTaskId);
 
-      console.log("tasks[overIndex].sortIndex", tasks[overIndex].sortIndex);
+      tasks[activeIndex].status = tasks[overIndex].status;
 
-      // update task being moved
-      updateSortIndex({
-        taskId: tasks[activeIndex].id as string,
-        status: tasks[overIndex].status as string,
-        sortIndex: tasks[overIndex].sortIndex,
-      });
-
-      // need to change sort index on task being swapped
-      updateSortIndex({
-        taskId: tasks[overIndex].id as string,
-        status: tasks[activeIndex].status as string,
-        sortIndex: tasks[activeIndex].sortIndex,
-      });
+      setTasks(arrayMove(tasks, activeIndex, overIndex));
     }
 
     const isOverAColumn = over.data.current?.type === "Column";
-    // drop task on column
 
+    // drop task on column
     if (isActiveATask && isOverAColumn) {
       const activeIndex = tasks.findIndex((t) => {
         return t.id === activeTaskId;
       });
 
-      updateStatus({
-        id: tasks[activeIndex].id as string,
-        createdById: tasks[activeIndex].createdById,
-        initial: tasks[activeIndex].initial,
-        title: tasks[activeIndex].title,
-        status: overTaskId as string,
-        colIndex: getColumnLength(overTaskId as string) + 1,
-      });
+      tasks[activeIndex].status = overTaskId;
+
+      // trigger a re-render
+      setTasks(arrayMove(tasks, activeIndex, activeIndex));
     }
   };
+
+  const onDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+
+    const activeTaskId = active.id;
+
+    const activeIndex = tasks.findIndex((t) => {
+      return t.id === activeTaskId;
+    });
+
+    //TODO: maybe save this as a user field
+    const idsOrderArray = tasks.map((task) => task.id);
+    localStorage.setItem("taskOrder", JSON.stringify(idsOrderArray));
+
+    updateStatus({
+      taskId: tasks[activeIndex].id as string,
+      status: tasks[activeIndex].status as string,
+    });
+  };
+
+  //TODO make real loading/error UIs
+  if (isLoading) {
+    return <div>loading...</div>;
+  }
+
+  if (error) {
+    return <div>Something went wrong... {error.message}</div>;
+  }
 
   return (
     <DndContext
       id="unique-dnd-context-id"
       sensors={sensors}
       onDragStart={onDragStart}
-      onDragEnd={onDragOver}
+      onDragOver={onDragOver}
+      onDragEnd={onDragEnd}
     >
       <div className="flex flex-nowrap gap-4 justify-center">
         <SortableContext items={columnsId}>
@@ -212,7 +240,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         </SortableContext>
       </div>
 
-      {/* {typeof window === "object" &&
+      {typeof window === "object" &&
         createPortal(
           <DragOverlay>
             {activeTask ? (
@@ -220,11 +248,12 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
                 task={activeTask}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
+                colIndex={-1}
               />
             ) : null}
           </DragOverlay>,
           document.body
-        )} */}
+        )}
     </DndContext>
   );
 };

@@ -30,7 +30,7 @@ export const appRouter = router({
   getUsersTasks: privateProcedure.query(async ({ ctx }) => {
     const usersTasks = await db.query.tasks.findMany({
       where: eq(tasks.createdById, ctx.clerkId),
-      orderBy: [asc(tasks.sortIndex)],
+      //orderBy: [asc(tasks.sortIndex)],
     });
 
     return usersTasks as Task[];
@@ -75,6 +75,19 @@ export const appRouter = router({
       await db
         .update(tasks)
         .set({ sortIndex: input.sortIndex, status: input.status })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  updateStatus: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        status: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ status: input.status })
         .where(eq(tasks.id, input.taskId));
     }),
 });
