@@ -20,8 +20,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import KanbanCard from "./KanbanCard";
 import KanbanColumn from "./KanbanColumn";
+import OverlayCard from "./OverlayCard";
 
 interface KanbanBoardProps {}
 
@@ -235,13 +235,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       {typeof window === "object" &&
         createPortal(
           <DragOverlay>
-            {activeTask ? (
-              <KanbanCard
-                task={activeTask}
-                updateTask={updateTask}
-                deleteTask={deleteTask}
-              />
-            ) : null}
+            {activeTask ? <OverlayCard title={activeTask.title} /> : null}
           </DragOverlay>,
           document.body
         )}
