@@ -58,6 +58,12 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     },
   });
 
+  const { mutate: updateSortIndex } = trpc.updateSortIndex.useMutation({
+    onSuccess: () => {
+      utils.getUsersTasks.invalidate();
+    },
+  });
+
   useEffect(() => {
     setTasks(usersTasks as Task[]);
   }, [usersTasks]);
@@ -148,13 +154,18 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       const activeIndex = tasks.findIndex((t) => t.id === activeTaskId);
       const overIndex = tasks.findIndex((t) => t.id === overTaskId);
 
-      updateStatus({
-        id: tasks[activeIndex].id as string,
-        createdById: tasks[activeIndex].createdById,
-        initial: tasks[activeIndex].initial,
-        title: tasks[activeIndex].title,
-        status: tasks[overIndex].status as string,
-        colIndex: tasks[overIndex].sortIndex,
+      console.log("tasks[overIndex].sortIndex", tasks[overIndex].sortIndex);
+
+      // update task being moved
+      updateSortIndex({
+        taskId: tasks[activeIndex].id as string,
+        sortIndex: tasks[overIndex].sortIndex,
+      });
+
+      // need to change sort index on task being swapped
+      updateSortIndex({
+        taskId: tasks[overIndex].id as string,
+        sortIndex: tasks[activeIndex].sortIndex,
       });
     }
 

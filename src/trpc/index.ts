@@ -4,7 +4,7 @@ import { TaskValidator } from "@/lib/validators/taskValidator";
 import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
@@ -30,6 +30,7 @@ export const appRouter = router({
   getUsersTasks: privateProcedure.query(async ({ ctx }) => {
     const usersTasks = await db.query.tasks.findMany({
       where: eq(tasks.createdById, ctx.clerkId),
+      orderBy: [asc(tasks.sortIndex)],
     });
 
     return usersTasks as Task[];
@@ -61,6 +62,14 @@ export const appRouter = router({
     )
     .mutation(async ({ input }) => {
       await db.delete(tasks).where(eq(tasks.id, input.id));
+    }),
+  updateSortIndex: privateProcedure
+    .input(z.object({ taskId: z.string(), sortIndex: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ sortIndex: input.sortIndex })
+        .where(eq(tasks.id, input.taskId));
     }),
 });
 // Export type router type signature,
