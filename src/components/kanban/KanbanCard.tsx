@@ -20,19 +20,20 @@ import { Input } from "../ui/input";
 
 interface KanbanCardProps {
   task: Task;
+  colIndex: number;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
 }
 
-const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
+const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
   const [editMode, setEditMode] = useState(false);
 
   const utils = trpc.useContext();
 
-  const { userId } = useAuth();
+  /*  const { userId } = useAuth();
   if (!userId) {
     redirect("/");
-  }
+  } */
 
   useEffect(() => {
     if (task.initial) {
@@ -110,6 +111,7 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
               initial: false,
               status: task.status as string,
               description: task.description,
+              colIndex,
             });
           }
         }}
@@ -157,6 +159,7 @@ const KanbanCard = ({ task, updateTask }: KanbanCardProps) => {
                 initial: false,
                 status: task.status as string,
                 description: task.description,
+                colIndex,
               });
             }}
           >

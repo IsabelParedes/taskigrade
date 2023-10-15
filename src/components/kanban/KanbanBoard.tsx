@@ -8,7 +8,6 @@ import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
   DragOverEvent,
-  DragOverlay,
   DragStartEvent,
   PointerSensor,
   useSensor,
@@ -18,8 +17,6 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
-import KanbanCard from "./KanbanCard";
 import KanbanColumn from "./KanbanColumn";
 
 interface KanbanBoardProps {}
@@ -81,9 +78,10 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       title: "",
       initial: true,
       createdById: userId,
+      sortIndex: getColumnLength(columnId as string),
     };
 
-    setTasks([newTask, ...tasks]);
+    setTasks([...tasks, newTask]);
   };
 
   const deleteTask = (id: Id) => {
@@ -102,8 +100,11 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     setTasks(newTasks);
   };
 
-  const generateId = () => {
-    return Math.floor(Math.random() * 10001);
+  const getColumnLength = (colId: string) => {
+    // get count of tasks in the column
+    return tasks.filter((t) => {
+      return t.status === colId ? true : false;
+    }).length;
   };
 
   const onDragStart = (e: DragStartEvent) => {
@@ -153,6 +154,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         initial: tasks[activeIndex].initial,
         title: tasks[activeIndex].title,
         status: tasks[overIndex].status as string,
+        colIndex: tasks[overIndex].sortIndex,
       });
     }
 
@@ -170,6 +172,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         initial: tasks[activeIndex].initial,
         title: tasks[activeIndex].title,
         status: overTaskId as string,
+        colIndex: getColumnLength(overTaskId as string) + 1,
       });
     }
   };
@@ -196,7 +199,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         </SortableContext>
       </div>
 
-      {typeof window === "object" &&
+      {/* {typeof window === "object" &&
         createPortal(
           <DragOverlay>
             {activeTask ? (
@@ -208,7 +211,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
             ) : null}
           </DragOverlay>,
           document.body
-        )}
+        )} */}
     </DndContext>
   );
 };

@@ -37,6 +37,7 @@ export const appRouter = router({
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ input }) => {
+      console.log("input", input);
       await db
         .insert(tasks)
         .values({
@@ -45,6 +46,7 @@ export const appRouter = router({
           status: input.status,
           createdById: input.createdById,
           initial: input.initial,
+          sortIndex: input.colIndex,
         })
         .onConflictDoUpdate({
           target: tasks.id,
