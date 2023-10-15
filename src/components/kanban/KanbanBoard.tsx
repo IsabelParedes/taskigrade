@@ -3,7 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 
 import { statusCols } from "@/lib/constants";
-import { Column, Id, Task } from "@/types/types";
+import { Id, Task } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
@@ -18,7 +18,7 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
 import { redirect } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanCard from "./KanbanCard";
 import KanbanColumn from "./KanbanColumn";
@@ -31,14 +31,11 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     redirect("/");
   }
 
-  const [columns, setColumns] = useState<Column[]>(statusCols);
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-
   const utils = trpc.useContext();
+
+  const columnsId = statusCols.map((col) => col.id);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -62,7 +59,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     },
   });
 
-  const { mutate: updateSortIndex } = trpc.updateSortIndex.useMutation({
+  const { mutate: removeTask } = trpc.deleteTask.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
     },
@@ -99,15 +96,9 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       title: "",
       initial: true,
       createdById: userId,
-      sortIndex: getColumnLength(columnId as string),
     };
 
     setTasks([...tasks, newTask]);
-  };
-
-  const deleteTask = (id: Id) => {
-    /* const filteredTasks = tasks.filter((task) => task.id !== id);
-    setTasks(filteredTasks); */
   };
 
   const updateTask = (id: Id, title: string) => {
@@ -121,19 +112,20 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     setTasks(newTasks);
   };
 
-  const getColumnLength = (colId: string) => {
-    // get count of tasks in the column
-    return tasks.filter((t) => {
-      return t.status === colId ? true : false;
-    }).length;
+  const deleteTask = (taskId: string) => {
+    const arrayIdsOrder = JSON.parse(localStorage.getItem("taskOrder")!);
+
+    if (arrayIdsOrder?.length) {
+      const newIdsOrderArray = arrayIdsOrder.filter(
+        (id: string) => id !== taskId
+      );
+      localStorage.setItem("taskOrder", JSON.stringify(newIdsOrderArray));
+    }
+
+    removeTask({ id: taskId });
   };
 
   const onDragStart = (e: DragStartEvent) => {
-    if (e.active.data.current?.type === "Column") {
-      setActiveColumn(e.active.data.current.column);
-      return;
-    }
-
     if (e.active.data.current?.type === "Task") {
       setActiveTask(e.active.data.current.task);
       return;
@@ -190,7 +182,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   };
 
   const onDragEnd = (e: DragEndEvent) => {
-    const { active, over } = e;
+    const { active } = e;
 
     const activeTaskId = active.id;
 
@@ -227,14 +219,14 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     >
       <div className="flex flex-nowrap gap-4 justify-center">
         <SortableContext items={columnsId}>
-          {columns.map((col) => (
+          {statusCols.map((col) => (
             <KanbanColumn
               key={col.id}
               column={col}
               tasks={tasks.filter((task) => task.status === col.id)}
-              deleteTask={deleteTask}
               updateTask={updateTask}
               createTask={createTask}
+              deleteTask={deleteTask}
             />
           ))}
         </SortableContext>
@@ -246,9 +238,8 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
             {activeTask ? (
               <KanbanCard
                 task={activeTask}
-                deleteTask={deleteTask}
                 updateTask={updateTask}
-                colIndex={-1}
+                deleteTask={deleteTask}
               />
             ) : null}
           </DragOverlay>,
