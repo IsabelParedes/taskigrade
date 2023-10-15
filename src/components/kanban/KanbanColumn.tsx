@@ -10,17 +10,17 @@ interface KanbanColumnProps {
   //title: "to do" | "in progress" | "test" | "complete";
   column: Column;
   tasks: Task[];
-  deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
   createTask: (columnId: Id) => void;
+  deleteTask: (taskId: string) => void;
 }
 
 const KanbanColumn = ({
   column,
   tasks,
-  deleteTask,
   updateTask,
   createTask,
+  deleteTask
 }: KanbanColumnProps) => {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -60,14 +60,8 @@ const KanbanColumn = ({
 
       <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg">
         <SortableContext items={tasksIds}>
-          {tasks.map((task, index) => (
-            <KanbanCard
-              key={task.id}
-              task={task}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
-              colIndex={index}
-            />
+          {tasks.map((task) => (
+            <KanbanCard key={task.id} task={task} updateTask={updateTask} deleteTask={deleteTask} />
           ))}
         </SortableContext>
       </CardContent>

@@ -12,5 +12,4 @@ export type Task = {
   createdById: string;
   initial: boolean;
   description?: string;
-  sortIndex: number;
 };

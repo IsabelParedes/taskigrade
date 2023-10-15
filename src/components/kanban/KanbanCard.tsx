@@ -2,11 +2,9 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { Id, Task } from "@/types/types";
-import { useAuth } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -20,12 +18,11 @@ import { Input } from "../ui/input";
 
 interface KanbanCardProps {
   task: Task;
-  colIndex: number;
-  deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
+  deleteTask: (taskId: string) => void;
 }
 
-const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
+const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
   const [editMode, setEditMode] = useState(false);
 
   const utils = trpc.useContext();
@@ -80,12 +77,6 @@ const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
     },
   });
 
-  const { mutate: deleteTask } = trpc.deleteTask.useMutation({
-    onSuccess: () => {
-      utils.getUsersTasks.invalidate();
-    },
-  });
-
   if (isDragging) {
     return (
       <div
@@ -111,7 +102,6 @@ const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
               initial: false,
               status: task.status as string,
               description: task.description,
-              colIndex,
             });
           }
         }}
@@ -159,7 +149,6 @@ const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
                 initial: false,
                 status: task.status as string,
                 description: task.description,
-                colIndex,
               });
             }}
           >
@@ -173,7 +162,7 @@ const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
             variant={"outline"}
             className="bg-transparent hover:bg-destructive"
             onClick={() => {
-              deleteTask({ id: task.id as string });
+              deleteTask(task.id as string);
             }}
           >
             <Trash className="h-4 w-4" />
