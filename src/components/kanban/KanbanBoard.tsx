@@ -159,12 +159,14 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       // update task being moved
       updateSortIndex({
         taskId: tasks[activeIndex].id as string,
+        status: tasks[overIndex].status as string,
         sortIndex: tasks[overIndex].sortIndex,
       });
 
       // need to change sort index on task being swapped
       updateSortIndex({
         taskId: tasks[overIndex].id as string,
+        status: tasks[activeIndex].status as string,
         sortIndex: tasks[activeIndex].sortIndex,
       });
     }
@@ -193,7 +195,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
       id="unique-dnd-context-id"
       sensors={sensors}
       onDragStart={onDragStart}
-      onDragOver={onDragOver}
+      onDragEnd={onDragOver}
     >
       <div className="flex flex-nowrap gap-4 justify-center">
         <SortableContext items={columnsId}>
