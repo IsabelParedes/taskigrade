@@ -5,5 +5,6 @@ export const TaskValidator = z.object({
   status: z.string(),
   createdById: z.string(),
   initial: z.boolean(),
+  colIndex: z.number(),
   description: z.string().nullish(),
 });

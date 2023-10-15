@@ -60,12 +60,13 @@ const KanbanColumn = ({
 
       <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg">
         <SortableContext items={tasksIds}>
-          {tasks.map((task) => (
+          {tasks.map((task, index) => (
             <KanbanCard
               key={task.id}
               task={task}
               deleteTask={deleteTask}
               updateTask={updateTask}
+              colIndex={index}
             />
           ))}
         </SortableContext>
