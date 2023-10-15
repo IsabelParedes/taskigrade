@@ -64,11 +64,17 @@ export const appRouter = router({
       await db.delete(tasks).where(eq(tasks.id, input.id));
     }),
   updateSortIndex: privateProcedure
-    .input(z.object({ taskId: z.string(), sortIndex: z.number() }))
+    .input(
+      z.object({
+        taskId: z.string(),
+        sortIndex: z.number(),
+        status: z.string(),
+      })
+    )
     .mutation(async ({ input }) => {
       await db
         .update(tasks)
-        .set({ sortIndex: input.sortIndex })
+        .set({ sortIndex: input.sortIndex, status: input.status })
         .where(eq(tasks.id, input.taskId));
     }),
 });
