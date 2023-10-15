@@ -91,7 +91,7 @@ const KanbanCard = ({ task, updateTask, colIndex }: KanbanCardProps) => {
       <div
         ref={setNodeRef}
         style={style}
-        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 bg-accent"
+        className=" p-3 h-48 rounded-xl cursor-grab border-2 opacity-50 bg-accent bg-emerald-600"
       />
     );
   }
