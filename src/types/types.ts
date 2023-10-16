@@ -4,12 +4,3 @@ export type Column = {
   id: Id;
   title: string;
 };
-
-export type Task = {
-  id: Id;
-  title: string;
-  status: Id;
-  createdById: string;
-  initial: boolean;
-  description?: string;
-};

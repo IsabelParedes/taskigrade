@@ -7,3 +7,5 @@ export const TaskValidator = z.object({
   initial: z.boolean(),
   description: z.string().nullish(),
 });
+
+export type Task = z.infer<typeof TaskValidator>;

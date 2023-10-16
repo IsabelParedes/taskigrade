@@ -1,10 +1,11 @@
-import { Column, Id, Task } from "@/types/types";
+import { Column, Id } from "@/types/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Separator } from "../ui/separator";
 import KanbanCard from "./KanbanCard";
 import KanbanHeader from "./KanbanHeader";
+import { Task } from "@/lib/validators/taskValidator";
 
 interface KanbanColumnProps {
   //title: "to do" | "in progress" | "test" | "complete";
@@ -20,7 +21,7 @@ const KanbanColumn = ({
   tasks,
   updateTask,
   createTask,
-  deleteTask
+  deleteTask,
 }: KanbanColumnProps) => {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -61,7 +62,12 @@ const KanbanColumn = ({
       <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
-            <KanbanCard key={task.id} task={task} updateTask={updateTask} deleteTask={deleteTask} />
+            <KanbanCard
+              key={task.id}
+              task={task}
+              updateTask={updateTask}
+              deleteTask={deleteTask}
+            />
           ))}
         </SortableContext>
       </CardContent>
