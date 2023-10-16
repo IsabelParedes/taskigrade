@@ -1,5 +1,10 @@
 import { relations, sql } from "drizzle-orm";
-import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+} from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -22,10 +27,46 @@ export const tasks = sqliteTable("tasks", {
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
 
-export const tasksRelation = relations(tasks, ({ one }) => ({
+export const tasksRelation = relations(tasks, ({ one, many }) => ({
   createdBy: one(users, {
     fields: [tasks.createdById],
     references: [users.id],
+  }),
+  tasksToTags: many(tasksToTags),
+}));
+
+export const tags = sqliteTable("tags", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  label: text("label").notNull(),
+});
+
+export const tagRelations = relations(tags, ({ many }) => ({
+  tasksToTags: many(tasksToTags),
+}));
+
+export const tasksToTags = sqliteTable(
+  "tasks_to_tags",
+  {
+    taskId: text("task_id")
+      .notNull()
+      .references(() => tasks.id),
+    tagId: integer("tag_id")
+      .notNull()
+      .references(() => tags.id),
+  },
+  (t) => ({
+    pk: primaryKey(t.taskId, t.tagId),
+  })
+);
+
+export const tasksToTagsRelations = relations(tasksToTags, ({ one }) => ({
+  task: one(tasks, {
+    fields: [tasksToTags.taskId],
+    references: [tasks.id],
+  }),
+  tags: one(tags, {
+    fields: [tasksToTags.tagId],
+    references: [tags.id],
   }),
 }));
 
