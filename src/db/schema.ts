@@ -35,6 +35,7 @@ export const tasksRelation = relations(tasks, ({ one, many }) => ({
   tasksToTags: many(tasksToTags),
 }));
 
+//TODO: tags go on the modal, need that to continue
 export const tags = sqliteTable("tags", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   label: text("label").notNull(),

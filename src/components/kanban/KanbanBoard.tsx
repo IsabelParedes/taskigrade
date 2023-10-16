@@ -3,7 +3,7 @@
 import { trpc } from "@/app/_trpc/client";
 
 import { statusCols } from "@/lib/constants";
-import { Id, Task } from "@/types/types";
+import { Id } from "@/types/types";
 import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanColumn from "./KanbanColumn";
 import OverlayCard from "./OverlayCard";
+import { Task } from "@/lib/validators/taskValidator";
 
 interface KanbanBoardProps {}
 
@@ -92,7 +93,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   const createTask = (columnId: Id) => {
     const newTask: Task = {
       id: createId(),
-      status: columnId,
+      status: columnId as string,
       title: "",
       initial: true,
       createdById: userId,
@@ -174,7 +175,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         return t.id === activeTaskId;
       });
 
-      tasks[activeIndex].status = overTaskId;
+      tasks[activeIndex].status = overTaskId as string;
 
       // trigger a re-render
       setTasks(arrayMove(tasks, activeIndex, activeIndex));

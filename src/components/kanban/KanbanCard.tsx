@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { Id, Task } from "@/types/types";
+import { Id } from "@/types/types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Trash } from "lucide-react";
@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
+import { Task } from "@/lib/validators/taskValidator";
 
 interface KanbanCardProps {
   task: Task;

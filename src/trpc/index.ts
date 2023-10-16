@@ -1,7 +1,7 @@
 import { db } from "@/db/db";
 import { tasks, users } from "@/db/schema";
-import { TaskValidator } from "@/lib/validators/taskValidator";
-import { Task } from "@/types/types";
+import { Task, TaskValidator } from "@/lib/validators/taskValidator";
+//import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
