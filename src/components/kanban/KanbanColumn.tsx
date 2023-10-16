@@ -1,4 +1,4 @@
-import { Column, Id, Task } from "@/temp/types";
+import { Column, Id, Task } from "@/types/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -10,15 +10,17 @@ interface KanbanColumnProps {
   //title: "to do" | "in progress" | "test" | "complete";
   column: Column;
   tasks: Task[];
-  deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
+  createTask: (columnId: Id) => void;
+  deleteTask: (taskId: string) => void;
 }
 
 const KanbanColumn = ({
   column,
   tasks,
-  deleteTask,
   updateTask,
+  createTask,
+  deleteTask
 }: KanbanColumnProps) => {
   const tasksIds = useMemo(() => {
     return tasks.map((task) => task.id);
@@ -47,19 +49,19 @@ const KanbanColumn = ({
       className="basis-1/4 border-0 cursor-auto"
     >
       <CardHeader className="capitalize text-center bg-secondary text-secondary-foreground shadow-lg rounded-lg">
-        <KanbanHeader title={column.title} count={tasks.length} />
+        <KanbanHeader
+          title={column.title}
+          count={tasks.length}
+          createTask={createTask}
+          columnId={column.id}
+        />
         <Separator />
       </CardHeader>
 
       <CardContent className="gap-4 flex flex-col mt-4 bg-primary p-4 shadow-lg rounded-lg">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
-            <KanbanCard
-              key={task.id}
-              task={task}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
-            />
+            <KanbanCard key={task.id} task={task} updateTask={updateTask} deleteTask={deleteTask} />
           ))}
         </SortableContext>
       </CardContent>

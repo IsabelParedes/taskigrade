@@ -1,5 +1,9 @@
+import { db } from "@/db/db";
+import { users } from "@/db/schema";
 import { auth } from "@clerk/nextjs";
 import { TRPCError, initTRPC } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 /**
  * Initialization of tRPC backend
@@ -8,14 +12,24 @@ import { TRPCError, initTRPC } from "@trpc/server";
 const t = initTRPC.create();
 
 const isAuth = t.middleware(async ({ next }) => {
-  const { user } = auth();
-  if (!user) {
+  const { user, userId: clerkId } = auth();
+
+  if (!clerkId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  const userId = await db.query.users.findFirst({
+    columns: { id: true },
+    where: eq(users.clerkId, clerkId),
+  });
+
+  if (!userId) {
+    redirect("/auth-callback");
   }
 
   // context returns value from middleware into the private api route
   return next({
-    ctx: { user },
+    ctx: { user, clerkId, userId },
   });
 });
 

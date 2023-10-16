@@ -9,26 +9,32 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { Id } from "@/types/types";
 
 interface KanbanHeaderProps {
   title: string;
   count: number;
+  columnId: Id;
+  createTask: (columnId: Id) => void;
+
   // title: "to do" | "in progress" | "test" | "complete";
 }
 
-const KanbanHeader = ({ count, title }: KanbanHeaderProps) => {
-  const handleClick = () => {
-    console.log("click");
-  };
-
+const KanbanHeader = ({
+  count,
+  title,
+  createTask,
+  columnId,
+}: KanbanHeaderProps) => {
   return (
     <div className="flex justify-between items-center">
-      {title} <Badge variant={"outline"}>{count}</Badge>
+      <Badge variant={"outline"}>{count}</Badge>
+      {title}
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
-              onClick={handleClick}
+              onClick={() => createTask(columnId)}
               size={"icon"}
               variant={"ghost"}
               className="h-5 w-5"
