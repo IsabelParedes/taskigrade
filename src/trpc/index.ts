@@ -37,7 +37,6 @@ export const appRouter = router({
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ input }) => {
-      console.log("input", input);
       await db
         .insert(tasks)
         .values({
@@ -73,6 +72,27 @@ export const appRouter = router({
         .update(tasks)
         .set({ status: input.status })
         .where(eq(tasks.id, input.taskId));
+    }),
+  getTaskOrder: privateProcedure.query(async ({ ctx }) => {
+    const taskOrder = await db.query.users.findFirst({
+      columns: {
+        taskOrder: true,
+      },
+      where: eq(users.clerkId, ctx.clerkId),
+    });
+
+    console.log("taskOrder", taskOrder?.taskOrder);
+
+    return taskOrder?.taskOrder;
+  }),
+  updateTaskOrder: privateProcedure
+    .input(z.object({ sortOrder: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      console.log("sortOrder", input.sortOrder);
+      await db
+        .update(users)
+        .set({ taskOrder: input.sortOrder })
+        .where(eq(users.clerkId, ctx.clerkId));
     }),
 });
 // Export type router type signature,

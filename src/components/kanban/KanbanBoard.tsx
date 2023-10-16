@@ -1,7 +1,6 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-
 import { statusCols } from "@/lib/constants";
 import { Task } from "@/lib/validators/taskValidator";
 import { Id } from "@/types/types";
@@ -50,6 +49,9 @@ const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
     placeholderData: [],
   });
 
+  const { data: taskOrder, refetch: refetchTaskOrder } =
+    trpc.getTaskOrder.useQuery();
+
   const { mutate: updateStatus } = trpc.updateStatus.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
@@ -59,6 +61,13 @@ const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
   const { mutate: removeTask } = trpc.deleteTask.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
+    },
+  });
+
+  const { mutate: updateTaskOrder } = trpc.updateTaskOrder.useMutation({
+    onSuccess: () => {
+      console.log("update task order");
+      utils.getTaskOrder.invalidate();
     },
   });
 

@@ -10,6 +10,7 @@ export const users = sqliteTable("users", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   clerkId: text("clerk_id").notNull(),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
+  taskOrder: text("task_order", { mode: "json" }).$type<string[]>(),
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

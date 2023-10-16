@@ -12,7 +12,7 @@ import { redirect } from "next/navigation";
 const t = initTRPC.create();
 
 const isAuth = t.middleware(async ({ next }) => {
-  const { user, userId: clerkId } = auth();
+  const { userId: clerkId } = auth();
 
   if (!clerkId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -29,7 +29,7 @@ const isAuth = t.middleware(async ({ next }) => {
 
   // context returns value from middleware into the private api route
   return next({
-    ctx: { user, clerkId, userId },
+    ctx: { clerkId, userId },
   });
 });
 
