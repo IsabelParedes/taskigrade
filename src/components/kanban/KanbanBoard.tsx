@@ -3,8 +3,8 @@
 import { trpc } from "@/app/_trpc/client";
 
 import { statusCols } from "@/lib/constants";
+import { Task } from "@/lib/validators/taskValidator";
 import { Id } from "@/types/types";
-import { useAuth } from "@clerk/nextjs";
 import {
   DndContext,
   DragEndEvent,
@@ -17,21 +17,17 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanColumn from "./KanbanColumn";
 import OverlayCard from "./OverlayCard";
-import { Task } from "@/lib/validators/taskValidator";
 
-interface KanbanBoardProps {}
+interface KanbanBoardProps {
+  userId: string;
+  userAvatar: string;
+}
 
-const KanbanBoard = ({}: KanbanBoardProps) => {
-  const { userId } = useAuth();
-  if (!userId) {
-    redirect("/");
-  }
-
+const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const utils = trpc.useContext();
