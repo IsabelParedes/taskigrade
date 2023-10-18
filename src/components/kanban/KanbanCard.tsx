@@ -1,11 +1,14 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import { Task } from "@/lib/validators/taskValidator";
 import { Id } from "@/types/types";
+import { useUser } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash } from "lucide-react";
+import { GitBranchPlus, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -15,7 +18,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
-import { Task } from "@/lib/validators/taskValidator";
 
 interface KanbanCardProps {
   task: Task;
@@ -25,6 +27,8 @@ interface KanbanCardProps {
 
 const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
   const [editMode, setEditMode] = useState(false);
+
+  const { user } = useUser();
 
   const utils = trpc.useContext();
 
@@ -78,6 +82,9 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
     },
   });
 
+  const addSubTask = () => {
+    console.log("click");
+  };
   if (isDragging) {
     return (
       <div
@@ -128,7 +135,17 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
           toggleEditMode();
         }}
       >
-        {editMode ? <EditContent /> : task.title}
+        {editMode ? (
+          <EditContent />
+        ) : (
+          <div className="flex justify-between">
+            {task.title}{" "}
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={user?.imageUrl} />
+              <AvatarFallback>{user?.firstName?.slice(0, 1)}</AvatarFallback>
+            </Avatar>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="justify-end">
         {editMode ? (
@@ -156,18 +173,27 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
             Save
           </Button>
         ) : (
-          <Button
-            key={`delete ${task.id}`}
-            aria-label="delete task"
-            size={"sm"}
-            variant={"outline"}
-            className="bg-transparent hover:bg-destructive"
-            onClick={() => {
-              deleteTask(task.id as string);
-            }}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
+          <div className="flex justify-between w-full">
+            <Button
+              size={"sm"}
+              className="border hover:bg-secondary"
+              onClick={addSubTask}
+            >
+              <GitBranchPlus className="h-4 w-4" />
+            </Button>
+            <Button
+              key={`delete ${task.id}`}
+              aria-label="delete task"
+              size={"sm"}
+              variant={"outline"}
+              className="bg-transparent hover:bg-destructive"
+              onClick={() => {
+                deleteTask(task.id as string);
+              }}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </div>
         )}
       </CardFooter>
     </Card>
