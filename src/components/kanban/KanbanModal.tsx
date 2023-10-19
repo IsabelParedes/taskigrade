@@ -34,6 +34,7 @@ const task = {
   totalTime: "time number",
   dueDate: "tomorrow",
   tags: ["tag1", "tag2", "tag3"],
+  priority: "high",
   subtasks: ["subtask1", "subtask2", "subtask3"],
 };
 
@@ -43,6 +44,8 @@ const statuses = [
   { status: "test", display: "Test" },
   { status: "complete", display: "Complete" },
 ];
+
+const priorities = ["urgent", "high", "normal", "complete"];
 
 const KanbanModal = (props: Props) => {
   return (
@@ -64,8 +67,8 @@ const KanbanModal = (props: Props) => {
                     <DropdownItem
                       key={status.status}
                       displayName={status.display}
-                      statusName={status.status}
-                      taskStatus={task.status}
+                      detailName={status.status}
+                      taskDetail={task.status}
                     />
                   ))}
                 </DropdownMenuContent>
@@ -90,30 +93,14 @@ const KanbanModal = (props: Props) => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    Urgent
-                    {task.status === "urgent" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    High
-                    {task.status === "high" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    Normal
-                    {task.status === "normal" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    Complete
-                    {task.status === "complete" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
+                  {priorities.map((priority) => (
+                    <DropdownItem
+                      key={priority}
+                      detailName={priority}
+                      taskDetail={task.priority}
+                    />
+                  ))}
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className="flex w-full items-center justify-between">
                     Clear
