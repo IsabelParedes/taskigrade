@@ -12,13 +12,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Task } from "@/lib/validators/taskValidator";
 import { Calendar, Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import DropdownItem from "../taskModal/DropdownItem";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { Task } from "@/lib/validators/taskValidator";
 
 const task = {
   id: "test",
@@ -43,7 +43,9 @@ const statuses = [
 
 const priorities = ["urgent", "high", "normal", "complete"];
 
-interface KanbanModalProps {task: Task}
+interface KanbanModalProps {
+  task: Task;
+}
 
 type ExtendedTask = Task & {
   priority: string;
@@ -51,6 +53,7 @@ type ExtendedTask = Task & {
   tags: string[];
   subtasks: string[];
 };
+
 const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   const task = {
     ...tempRename,
@@ -61,6 +64,13 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     subtasks: ["subtask1", "subtask2", "subtask3"],
   };
 
+  const statusDisplayMap: Record<string, string> = {
+    todo: "To Do",
+    inprogress: "In Progress",
+    test: "Test",
+    complete: "Complete",
+  };
+
   return (
     <>
       <div className="flex flex-col space-y-2 mt-4">
@@ -69,8 +79,8 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
           <div className="flex gap-1">
             <DropdownMenu>
               <DropdownMenuTrigger>
-                <Button className="rounded-r-none capitalize">
-                  {task.status}
+                <Button className="rounded-r-none">
+                  {statusDisplayMap[task.status]}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
