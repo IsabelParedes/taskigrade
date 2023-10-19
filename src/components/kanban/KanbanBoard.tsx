@@ -66,7 +66,6 @@ const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
 
   const { mutate: updateTaskOrder } = trpc.updateTaskOrder.useMutation({
     onSuccess: () => {
-      console.log("update task order");
       utils.getTaskOrder.invalidate();
     },
   });

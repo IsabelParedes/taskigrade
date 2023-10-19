@@ -9,6 +9,7 @@ interface DropdownItemProps {
   displayName?: string;
   detailName: string;
   taskDetail: string;
+  updateStatus?: () => void;
 }
 
 const DropdownItem = ({
@@ -16,25 +17,12 @@ const DropdownItem = ({
   taskDetail,
   detailName,
   displayName,
+  updateStatus,
 }: DropdownItemProps) => {
-  const utils = trpc.useContext();
-
-  const { mutate: updateStatus } = trpc.updateStatus.useMutation({
-    onSuccess: () => {
-      console.log("status updated");
-      utils.getUsersTasks.invalidate();
-    },
-  });
-
   return (
     <DropdownMenuItem
       className="flex w-full items-center justify-between"
-      onClick={() =>
-        updateStatus({
-          taskId,
-          status: detailName,
-        })
-      }
+      onClick={updateStatus}
     >
       <span className="capitalize">
         {displayName ? displayName : detailName}
