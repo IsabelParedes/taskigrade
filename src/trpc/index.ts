@@ -68,6 +68,7 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
+      console.log("input", input);
       await db
         .update(tasks)
         .set({ status: input.status })
