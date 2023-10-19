@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Calendar, Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
+import DropdownItem from "../taskModal/DropdownItem";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -35,6 +36,14 @@ const task = {
   tags: ["tag1", "tag2", "tag3"],
   subtasks: ["subtask1", "subtask2", "subtask3"],
 };
+
+const statuses = [
+  { status: "todo", display: "To Do" },
+  { status: "inprogress", display: "In Progress" },
+  { status: "test", display: "Test" },
+  { status: "complete", display: "Complete" },
+];
+
 const KanbanModal = (props: Props) => {
   return (
     <Dialog>
@@ -46,34 +55,19 @@ const KanbanModal = (props: Props) => {
             <div className="flex gap-1">
               <DropdownMenu>
                 <DropdownMenuTrigger>
-                  <Button className="rounded-r-none">{task.status}</Button>
+                  <Button className="rounded-r-none capitalize">
+                    {task.status}
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    To Do
-                    {task.status === "todo" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    In Progress
-                    {task.status === "inprogess" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    Test
-                    {task.status === "test" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="flex w-full items-center justify-between">
-                    Complete
-                    {task.status === "complete" ? (
-                      <Check className="w-4 h-4" />
-                    ) : null}
-                  </DropdownMenuItem>
+                  {statuses.map((status) => (
+                    <DropdownItem
+                      key={status.status}
+                      displayName={status.display}
+                      statusName={status.status}
+                      taskStatus={task.status}
+                    />
+                  ))}
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button size={"icon"} className="rounded-l-none">
