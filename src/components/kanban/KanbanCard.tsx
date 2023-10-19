@@ -122,7 +122,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Card
           ref={setNodeRef}
           style={style}

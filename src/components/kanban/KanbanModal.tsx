@@ -47,13 +47,6 @@ interface KanbanModalProps {
   task: Task;
 }
 
-type ExtendedTask = Task & {
-  priority: string;
-  dueDate: string;
-  tags: string[];
-  subtasks: string[];
-};
-
 const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   const task = {
     ...tempRename,
@@ -78,7 +71,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
           {/** header first row */}
           <div className="flex gap-1">
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button className="rounded-r-none">
                   {statusDisplayMap[task.status]}
                 </Button>
@@ -87,6 +80,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
                 {statuses.map((status) => (
                   <DropdownItem
                     key={status.status}
+                    taskId={task.id}
                     displayName={status.display}
                     detailName={status.status}
                     taskDetail={task.status}
@@ -108,7 +102,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
             <Separator orientation="vertical" className="mx-auto" />
 
             <DropdownMenu>
-              <DropdownMenuTrigger className="">
+              <DropdownMenuTrigger asChild>
                 <Button variant={"outline"} size={"icon"}>
                   <Flag className="w-4 h-4" />
                 </Button>
@@ -117,6 +111,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
                 {priorities.map((priority) => (
                   <DropdownItem
                     key={priority}
+                    taskId={task.id}
                     detailName={priority}
                     taskDetail={task.priority}
                   />
