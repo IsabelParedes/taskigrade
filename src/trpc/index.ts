@@ -68,7 +68,6 @@ export const appRouter = router({
       })
     )
     .mutation(async ({ input }) => {
-      console.log("input", input);
       await db
         .update(tasks)
         .set({ status: input.status })
@@ -82,14 +81,11 @@ export const appRouter = router({
       where: eq(users.clerkId, ctx.clerkId),
     });
 
-    console.log("taskOrder", taskOrder?.taskOrder);
-
     return taskOrder?.taskOrder;
   }),
   updateTaskOrder: privateProcedure
     .input(z.object({ sortOrder: z.array(z.string()) }))
     .mutation(async ({ ctx, input }) => {
-      console.log("sortOrder", input.sortOrder);
       await db
         .update(users)
         .set({ taskOrder: input.sortOrder })

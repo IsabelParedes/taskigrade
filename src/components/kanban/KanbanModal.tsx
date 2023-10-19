@@ -1,5 +1,7 @@
 /** for testing only */
+"use client";
 
+import { trpc } from "@/app/_trpc/client";
 import {
   DialogDescription,
   DialogHeader,
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Task } from "@/lib/validators/taskValidator";
 import { Calendar, Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
+import { useState } from "react";
 import DropdownItem from "../taskModal/DropdownItem";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
@@ -64,6 +67,19 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     complete: "Complete",
   };
 
+  const [displayStatus, setDisplayStatus] = useState(task.status);
+
+  const utils = trpc.useContext();
+
+  const { mutate: updateStatus } = trpc.updateStatus.useMutation({
+    onSuccess: () => {
+      //utils.getUsersTasks.invalidate();
+    },
+    onMutate: ({ status }) => {
+      setDisplayStatus(status);
+    },
+  });
+
   return (
     <>
       <div className="flex flex-col space-y-2 mt-4">
@@ -73,7 +89,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="rounded-r-none">
-                  {statusDisplayMap[task.status]}
+                  {statusDisplayMap[displayStatus]}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -83,7 +99,10 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
                     taskId={task.id}
                     displayName={status.display}
                     detailName={status.status}
-                    taskDetail={task.status}
+                    taskDetail={displayStatus}
+                    updateStatus={() =>
+                      updateStatus({ taskId: task.id, status: status.status })
+                    }
                   />
                 ))}
               </DropdownMenuContent>
