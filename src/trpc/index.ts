@@ -96,10 +96,17 @@ export const appRouter = router({
     .input(z.object({ taskId: z.string(), dueDate: z.number() }))
     .mutation(async ({ input }) => {
       const d = new Date(input.dueDate);
-      console.log("d", d);
       await db
         .update(tasks)
         .set({ dueDate: d })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  updateTotalTime: privateProcedure
+    .input(z.object({ taskId: z.string(), totalTime: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ totalTime: input.totalTime })
         .where(eq(tasks.id, input.taskId));
     }),
 });

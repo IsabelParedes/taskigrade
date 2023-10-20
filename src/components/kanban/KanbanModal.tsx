@@ -55,8 +55,8 @@ interface KanbanModalProps {
 const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   const task = {
     ...tempRename,
-    totalTime: "time number",
-    dueDate: "tomorrow",
+    //totalTime: "time number",
+    //dueDate: "tomorrow",
     tags: ["tag1", "tag2", "tag3"],
     priority: "high",
     subtasks: ["subtask1", "subtask2", "subtask3"],
@@ -153,7 +153,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
                 Time Tracked
               </span>
               <span>
-                <Timer />
+                <Timer taskId={task.id} totalTime={task.totalTime} />
               </span>
             </div>
             <Separator orientation="vertical" className="mx-auto" />

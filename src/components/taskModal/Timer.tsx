@@ -1,12 +1,29 @@
+import { trpc } from "@/app/_trpc/client";
 import { Play, Square } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
-interface TimerProps {}
+interface TimerProps {
+  totalTime: number;
+  taskId: string;
+}
 
-const Timer = ({}: TimerProps) => {
+const Timer = ({ taskId, totalTime }: TimerProps) => {
   const [isTimerOn, setIsTimerOn] = useState(false);
   const [time, setTime] = useState(0);
+
+  const { mutate: updateTotalTime } = trpc.updateTotalTime.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+  });
+
+  useEffect(() => {
+    setTime(totalTime);
+  }, [totalTime]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -31,6 +48,7 @@ const Timer = ({}: TimerProps) => {
   const handleStop = () => {
     if (isTimerOn) {
       setIsTimerOn(false);
+      updateTotalTime({ taskId, totalTime: time });
     }
   };
 
