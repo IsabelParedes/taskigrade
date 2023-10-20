@@ -15,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Task } from "@/lib/validators/taskValidator";
-import { format } from "date-fns";
 import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import { useState } from "react";
 import DropdownItem from "../taskModal/DropdownItem";
@@ -158,17 +157,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
               </span>
             </div>
             <Separator orientation="vertical" className="mx-auto" />
-            {task.dueDate ? (
-              <div className="flex flex-col">
-                <span className="text-sm text-muted-foreground">Due Date</span>
-                <span className="text-xs text-right">
-                  {format(new Date(task.dueDate), "MMM d")}
-                </span>
-              </div>
-            ) : null}
-            <div className="flex justify-around items-center gap-2">
-              <DueDatePicker taskId={task.id} />
-            </div>
+            <DueDatePicker task={task} />
           </div>
 
           {/** header third row */}
