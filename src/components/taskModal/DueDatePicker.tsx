@@ -8,16 +8,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Task } from "@/lib/validators/taskValidator";
+import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface DueDatePickerProps {
-  taskId: string;
+  //taskId: string;
+  task: Task;
 }
 
-const DueDatePicker = ({ taskId }: DueDatePickerProps) => {
-  const now = new Date();
-  const [date, setDate] = useState<Date | undefined>(now);
+const DueDatePicker = ({ task }: DueDatePickerProps) => {
+  const [date, setDate] = useState<Date | undefined>(
+    task.dueDate ? new Date(task.dueDate) : undefined
+  );
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const { mutate: updateDueDate } = trpc.updateDueDate.useMutation({
@@ -30,30 +34,39 @@ const DueDatePicker = ({ taskId }: DueDatePickerProps) => {
   });
 
   const handleSelect = (selectedDate: Date | undefined) => {
-    console.log("date", selectedDate);
     setDate(selectedDate);
     if (selectedDate) {
-      updateDueDate({ dueDate: selectedDate.getTime(), taskId });
+      updateDueDate({ dueDate: selectedDate.getTime(), taskId: task.id });
     }
     setCalendarOpen(false);
   };
 
   return (
-    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
-      <PopoverTrigger asChild>
-        <Button size={"icon"} variant={"outline"}>
-          <CalendarIcon className="h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={(e) => handleSelect(e)}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
+    <>
+      {date ? (
+        <div className="flex flex-col">
+          <span className="text-sm text-muted-foreground">Due Date</span>
+          <span className="text-xs text-right">{format(date, "MMM d")}</span>
+        </div>
+      ) : null}
+      <div className="flex justify-around items-center gap-2">
+        <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button size={"icon"} variant={"outline"}>
+              <CalendarIcon className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={(e) => handleSelect(e)}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
+    </>
   );
 };
 export default DueDatePicker;
