@@ -166,7 +166,8 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                   // need this so onClick fires before inputs onBlur
                   e.preventDefault()
                 }
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   saveTask({
                     id: task.id as string,
                     title: task.title,
@@ -195,7 +196,8 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                   size={"sm"}
                   variant={"outline"}
                   className="bg-transparent hover:bg-destructive"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     deleteTask(task.id as string);
                   }}
                 >
