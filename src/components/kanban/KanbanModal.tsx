@@ -141,7 +141,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col">
       <DialogHeader className="space-y-2 mt-4 ">
         {/** header first row */}
         <div className="flex gap-1">
