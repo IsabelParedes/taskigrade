@@ -91,6 +91,16 @@ export const appRouter = router({
         .set({ taskOrder: input.sortOrder })
         .where(eq(users.clerkId, ctx.clerkId));
     }),
+  updateDueDate: privateProcedure
+    .input(z.object({ taskId: z.string(), dueDate: z.number() }))
+    .mutation(async ({ input }) => {
+      const d = new Date(input.dueDate)
+      console.log('d', d)
+      await db
+        .update(tasks)
+        .set({ dueDate: d })
+        .where(eq(tasks.id, input.taskId));
+    }),
 });
 // Export type router type signature,
 // NOT the router itself.
