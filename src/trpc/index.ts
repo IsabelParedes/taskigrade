@@ -45,6 +45,7 @@ export const appRouter = router({
           status: input.status,
           createdById: input.createdById,
           initial: input.initial,
+          totalTime: input.totalTime,
         })
         .onConflictDoUpdate({
           target: tasks.id,
@@ -94,8 +95,8 @@ export const appRouter = router({
   updateDueDate: privateProcedure
     .input(z.object({ taskId: z.string(), dueDate: z.number() }))
     .mutation(async ({ input }) => {
-      const d = new Date(input.dueDate)
-      console.log('d', d)
+      const d = new Date(input.dueDate);
+      console.log("d", d);
       await db
         .update(tasks)
         .set({ dueDate: d })

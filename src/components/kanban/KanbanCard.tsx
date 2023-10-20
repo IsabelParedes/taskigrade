@@ -112,6 +112,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
               initial: false,
               status: task.status as string,
               description: task.description,
+              totalTime: task.totalTime,
             });
           }
         }}
@@ -173,6 +174,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                     initial: false,
                     status: task.status as string,
                     description: task.description,
+                    totalTime: task.totalTime,
                   });
                 }}
               >

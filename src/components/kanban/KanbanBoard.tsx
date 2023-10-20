@@ -100,6 +100,7 @@ const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
       status: columnId as string,
       title: "",
       initial: true,
+      totalTime: 0,
       createdById: userId,
     };
 
