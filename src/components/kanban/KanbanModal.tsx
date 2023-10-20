@@ -15,9 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Task } from "@/lib/validators/taskValidator";
-import { Calendar, Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
+import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import { useState } from "react";
 import DropdownItem from "../taskModal/DropdownItem";
+import DueDatePicker from "../taskModal/DueDatePicker";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -160,9 +161,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
               </div>
             ) : null}
             <div className="flex justify-around items-center gap-2">
-              <Button variant={"outline"} size={"icon"}>
-                <Calendar className="w-4 h-4" />
-              </Button>
+              <DueDatePicker taskId={task.id} />
             </div>
           </div>
 
