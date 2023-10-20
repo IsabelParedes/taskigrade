@@ -19,6 +19,7 @@ import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import { useState } from "react";
 import DropdownItem from "../taskModal/DropdownItem";
 import DueDatePicker from "../taskModal/DueDatePicker";
+import Timer from "../taskModal/Timer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -151,7 +152,9 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
               <span className="text-sm text-muted-foreground">
                 Time Tracked
               </span>
-              <span className="text-xs">{task.totalTime}</span>
+              <span>
+                <Timer />
+              </span>
             </div>
             <Separator orientation="vertical" className="mx-auto" />
             {task.dueDate ? (
