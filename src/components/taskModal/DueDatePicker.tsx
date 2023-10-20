@@ -1,5 +1,6 @@
 "use client";
 
+import { trpc } from "@/app/_trpc/client";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -7,7 +8,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { formatISO } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -16,15 +16,30 @@ interface DueDatePickerProps {
 }
 
 const DueDatePicker = ({ taskId }: DueDatePickerProps) => {
-  const [date, setDate] = useState<Date>();
+  const now = new Date();
+  const [date, setDate] = useState<Date | undefined>(now);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
-  useEffect(() => {
-    console.log("date", date);
-    console.log("string", formatISO(date!));
-  }, [date]);
+  const { mutate: updateDueDate } = trpc.updateDueDate.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+  });
+
+  const handleSelect = (selectedDate: Date | undefined) => {
+    console.log("date", selectedDate);
+    setDate(selectedDate);
+    if (selectedDate) {
+      updateDueDate({ dueDate: selectedDate.getTime(), taskId });
+    }
+    setCalendarOpen(false);
+  };
 
   return (
-    <Popover>
+    <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
       <PopoverTrigger asChild>
         <Button size={"icon"} variant={"outline"}>
           <CalendarIcon className="h-4 w-4" />
@@ -34,7 +49,7 @@ const DueDatePicker = ({ taskId }: DueDatePickerProps) => {
         <Calendar
           mode="single"
           selected={date}
-          onSelect={setDate}
+          onSelect={(e) => handleSelect(e)}
           initialFocus
         />
       </PopoverContent>
