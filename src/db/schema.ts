@@ -24,6 +24,7 @@ export const tasks = sqliteTable("tasks", {
   createdById: text("created_by_id").notNull(),
   initial: integer("initial", { mode: "boolean" }).notNull(),
   description: text("description"),
+  dueDate: text("due-date"),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
