@@ -7,7 +7,6 @@ import { useUser } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GitBranchPlus, Trash } from "lucide-react";
-import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
@@ -28,22 +27,9 @@ interface KanbanCardProps {
 }
 
 const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
-  const [editMode, setEditMode] = useState(false);
-
   const { user } = useUser();
 
   const utils = trpc.useContext();
-
-  /*  const { userId } = useAuth();
-  if (!userId) {
-    redirect("/");
-  } */
-
-  useEffect(() => {
-    if (task.initial) {
-      setEditMode(true);
-    }
-  }, [task.initial]);
 
   const {
     setNodeRef,
@@ -65,11 +51,6 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
     transform: CSS.Transform.toString(transform),
   };
 
-  const toggleEditMode = () => {
-    task.initial = false;
-    setEditMode((prev) => !prev);
-  };
-
   //upsert task
   const { mutate: saveTask } = trpc.upsertTask.useMutation({
     onSuccess: () => {
@@ -79,14 +60,12 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
     onError: () => {
       console.log("error");
     },
-    onMutate: () => {
-      toggleEditMode();
-    },
   });
 
   const addSubTask = () => {
     console.log("click");
   };
+
   if (isDragging) {
     return (
       <div
@@ -96,30 +75,6 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
       />
     );
   }
-  const EditContent = () => {
-    return (
-      <Input
-        value={task.title}
-        autoFocus
-        onBlur={() => setEditMode(false)}
-        placeholder="Enter task here..."
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && e.shiftKey) {
-            saveTask({
-              id: task.id as string,
-              title: task.title,
-              createdById: task.createdById,
-              initial: false,
-              status: task.status as string,
-              description: task.description,
-              totalTime: task.totalTime,
-            });
-          }
-        }}
-        onChange={(e) => updateTask(task.id, e.target.value)}
-      />
-    );
-  };
 
   return (
     <Dialog>
@@ -134,17 +89,35 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
           <CardHeader>
             <CardTitle className="flex"></CardTitle>
           </CardHeader>
-          <CardContent
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => {
-              toggleEditMode();
-            }}
-          >
-            {editMode ? (
-              <EditContent />
+          <CardContent>
+            {task.initial ? (
+              <>
+                <Input
+                  value={task.title}
+                  autoFocus
+                  placeholder="Enter task here..."
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      saveTask({
+                        id: task.id as string,
+                        title: task.title,
+                        createdById: task.createdById,
+                        initial: false,
+                        status: task.status as string,
+                        totalTime: task.totalTime,
+                      });
+                    }
+                  }}
+                  onChange={(e) => updateTask(task.id, e.target.value)}
+                />
+                <span className="text-xs text-foreground/80">
+                  Press Enter to save...
+                </span>
+              </>
             ) : (
               <div className="flex justify-between">
-                {task.title}{" "}
+                {task.title}
                 <Avatar className="h-6 w-6">
                   <AvatarImage src={user?.imageUrl} />
                   <AvatarFallback>
@@ -155,7 +128,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
             )}
           </CardContent>
           <CardFooter className="justify-end">
-            {editMode ? (
+            {task.initial ? (
               <Button
                 key={`save ${task.id}`}
                 aria-label="save new task"
