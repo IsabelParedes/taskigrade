@@ -1,12 +1,7 @@
-/** for testing only */
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import {
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { DialogDescription, DialogHeader } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,15 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Task } from "@/lib/validators/taskValidator";
 import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import DropdownItem from "../taskModal/DropdownItem";
 import DueDatePicker from "../taskModal/DueDatePicker";
 import Timer from "../taskModal/Timer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import TaskTitle from "./TaskTitle";
 
 const task = {
   id: "test",
@@ -56,8 +51,6 @@ interface KanbanModalProps {
 const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   const task = {
     ...tempRename,
-    //totalTime: "time number",
-    //dueDate: "tomorrow",
     tags: ["tag1", "tag2", "tag3"],
     priority: "high",
     subtasks: ["subtask1", "subtask2", "subtask3"],
@@ -70,75 +63,21 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     complete: "Complete",
   };
 
-  const [editMode, setEditMode] = useState(false);
-  const [title, setTitle] = useState(task.title);
   const [displayStatus, setDisplayStatus] = useState(task.status);
 
   const utils = trpc.useContext();
 
   const { mutate: updateStatus } = trpc.updateStatus.useMutation({
     onSuccess: () => {
-      //utils.getUsersTasks.invalidate();
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
     },
     onMutate: ({ status }) => {
       setDisplayStatus(status);
     },
   });
-
-  //upsert task
-  const { mutate: saveTask } = trpc.upsertTask.useMutation({
-    onSuccess: (data) => {
-      console.log("success");
-      console.log("data", data);
-      //utils.getUsersTasks.invalidate();
-    },
-    onError: () => {
-      console.log("error");
-    },
-    onMutate: () => {
-      toggleEditMode();
-    },
-  });
-
-  const toggleEditMode = () => {
-    task.initial = false;
-    setEditMode((prev) => !prev);
-  };
-
-  const handle = (e: ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-  };
-
-  const EditContent = () => {
-    return (
-      <>
-        <Input
-          value={title}
-          autoFocus
-          onBlur={() => setEditMode(false)}
-          placeholder="Enter task here..."
-          className="h-14 text-4xl w-fit"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              saveTask({
-                id: task.id as string,
-                title: title,
-                createdById: task.createdById,
-                initial: false,
-                status: task.status as string,
-                description: task.description,
-                totalTime: task.totalTime,
-              });
-            }
-          }}
-          onChange={handle}
-        />
-        <span className="text-sm font-normal text-foreground/80">
-          Press Enter to save
-        </span>
-      </>
-    );
-  };
 
   return (
     <div className="flex flex-col">
@@ -234,15 +173,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
 
       {/* Main section */}
       <div className="flex flex-col flex-1 justify-around">
-        <DialogTitle
-          className="text-4xl"
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            toggleEditMode();
-          }}
-        >
-          {editMode ? <EditContent /> : title}
-        </DialogTitle>
+        <TaskTitle taskId={task.id} taskTitle={task.title} isModal />
         <DialogDescription>
           {task.description
             ? task.description

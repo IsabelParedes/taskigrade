@@ -61,6 +61,19 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       await db.delete(tasks).where(eq(tasks.id, input.id));
     }),
+  updateTitle: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ title: input.title })
+        .where(eq(tasks.id, input.taskId));
+    }),
   updateStatus: privateProcedure
     .input(
       z.object({
