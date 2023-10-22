@@ -135,12 +135,11 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
           <Button variant={"outline"} size={"icon"}>
             <Check className="w-4 h-4" />
           </Button>
-          <Avatar className="mx-6">
+
+          <Avatar className="ml-6 mr-auto">
             <AvatarImage src={task.createdById} />
             <AvatarFallback>F</AvatarFallback>
           </Avatar>
-
-          <Separator orientation="vertical" className="mx-auto" />
 
           <DropdownMenu>
             {task.priority ? (
@@ -184,13 +183,11 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
 
         {/** header second row */}
         <div className="flex gap-6">
-          <div className="flex flex-col">
+          <div className="flex flex-col mr-auto">
             <span className="text-sm text-muted-foreground">Time Tracked</span>
-            <span>
-              <Timer taskId={task.id} totalTime={task.totalTime} />
-            </span>
+            <Timer taskId={task.id} totalTime={task.totalTime} />
           </div>
-          <Separator orientation="vertical" className="mx-auto" />
+
           <DueDatePicker task={task} />
         </div>
 
@@ -203,7 +200,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
               </Badge>
             ))}
           </div>
-          <Separator orientation="vertical" className="mx-auto" />
+
           <Button variant={"outline"} size={"icon"}>
             <Tag className="w-4 h-4" />
           </Button>
