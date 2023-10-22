@@ -10,6 +10,7 @@ interface DropdownItemProps {
   detailName: string;
   taskDetail: string;
   updateStatus?: () => void;
+  updatePriority?: () => void;
 }
 
 const DropdownItem = ({
@@ -18,6 +19,7 @@ const DropdownItem = ({
   detailName,
   displayName,
   updateStatus,
+  updatePriority
 }: DropdownItemProps) => {
   return (
     <DropdownMenuItem

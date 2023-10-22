@@ -9,10 +9,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import { Task } from "@/lib/validators/taskValidator";
 import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import { useState } from "react";
-import DropdownItem from "../taskModal/DropdownItem";
 import DueDatePicker from "../taskModal/DueDatePicker";
 import Timer from "../taskModal/Timer";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -42,7 +42,7 @@ const statuses = [
   { status: "complete", display: "Complete" },
 ];
 
-const priorities = ["urgent", "high", "normal", "complete"];
+const priorities = ["urgent", "high", "normal", "low"];
 
 interface KanbanModalProps {
   task: Task;
@@ -52,7 +52,6 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
   const task = {
     ...tempRename,
     tags: ["tag1", "tag2", "tag3"],
-    priority: "high",
     subtasks: ["subtask1", "subtask2", "subtask3"],
   };
 
@@ -63,7 +62,15 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     complete: "Complete",
   };
 
+  const priorityColorMap: Record<string, string> = {
+    urgent: "fill-red-600",
+    high: "fill-yellow-600",
+    normal: "fill-blue-600",
+    low: "fill-gray-600",
+  };
+
   const [displayStatus, setDisplayStatus] = useState(task.status);
+  const [displayPriority, setDisplayPriority] = useState(task.priority);
 
   const utils = trpc.useContext();
 
@@ -76,6 +83,19 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     },
     onMutate: ({ status }) => {
       setDisplayStatus(status);
+    },
+  });
+
+  const { mutate: updatePriority } = trpc.updatePriority.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+    onMutate: ({ priority }) => {
+      console.log("priority", priority);
+      setDisplayPriority(priority);
     },
   });
 
@@ -92,16 +112,20 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {statuses.map((status) => (
-                <DropdownItem
+                <DropdownMenuItem
                   key={status.status}
-                  taskId={task.id}
-                  displayName={status.display}
-                  detailName={status.status}
-                  taskDetail={displayStatus}
-                  updateStatus={() =>
+                  className="flex w-full items-center justify-between"
+                  onClick={() =>
                     updateStatus({ taskId: task.id, status: status.status })
                   }
-                />
+                >
+                  <span className="capitalize">
+                    {status.display ? status.display : status.status}
+                  </span>
+                  {displayStatus === status.status ? (
+                    <Check className="w-4 h-4" />
+                  ) : null}
+                </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
@@ -119,19 +143,35 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
           <Separator orientation="vertical" className="mx-auto" />
 
           <DropdownMenu>
+            {task.priority ? (
+              <span className="capitalize text-xs text-muted-foreground self-center mr-2">
+                {displayPriority}
+              </span>
+            ) : null}
             <DropdownMenuTrigger asChild>
               <Button variant={"outline"} size={"icon"}>
-                <Flag className="w-4 h-4" />
+                <Flag
+                  className={cn(
+                    "w-4 h-4",
+                    displayPriority ? priorityColorMap[displayPriority] : ""
+                  )}
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {priorities.map((priority) => (
-                <DropdownItem
+                <DropdownMenuItem
                   key={priority}
-                  taskId={task.id}
-                  detailName={priority}
-                  taskDetail={task.priority}
-                />
+                  className="flex w-full items-center justify-between"
+                  onClick={() => {
+                    updatePriority({ taskId: task.id, priority });
+                  }}
+                >
+                  <span className="capitalize">{priority}</span>
+                  {task.priority === priority ? (
+                    <Check className="w-4 h-4" />
+                  ) : null}
+                </DropdownMenuItem>
               ))}
 
               <DropdownMenuSeparator />

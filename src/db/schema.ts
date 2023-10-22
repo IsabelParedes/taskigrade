@@ -21,6 +21,7 @@ export const tasks = sqliteTable("tasks", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
   status: text("status").notNull(),
+  priority: text("priority"),
   createdById: text("created_by_id").notNull(),
   initial: integer("initial", { mode: "boolean" }).notNull(),
   description: text("description"),
