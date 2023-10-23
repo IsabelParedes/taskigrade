@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { DialogDescription, DialogHeader } from "@/components/ui/dialog";
+import { DialogHeader } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,6 +98,38 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
       setDisplayPriority(priority);
     },
   });
+
+  const { mutate: updateTitle } = trpc.updateTitle.useMutation({
+    onSuccess: (data) => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+    onMutate: () => {
+      //setEditMode(false);
+    },
+  });
+
+  const titleHelper = (taskId: string, text: string) => {
+    updateTitle({ taskId, title: text });
+  };
+
+  const { mutate: updateDescription } = trpc.updateDescription.useMutation({
+    onSuccess: (data) => {
+      console.log("success");
+    },
+    onError: () => {
+      console.log("error");
+    },
+    onMutate: () => {
+      //setEditMode(false);
+    },
+  });
+
+  const descriptionHelper = (taskId: string, text: string) => {
+    updateDescription({ taskId, description: text });
+  };
 
   return (
     <div className="flex flex-col">
@@ -210,12 +242,22 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
 
       {/* Main section */}
       <div className="flex flex-col flex-1 justify-around">
-        <TaskTitle taskId={task.id} taskTitle={task.title} isModal />
-        <DialogDescription>
-          {task.description
-            ? task.description
-            : "Enter your description here..."}
-        </DialogDescription>
+        <TaskTitle
+          taskId={task.id}
+          taskTitle={task.title}
+          isModal
+          onKeyDown={titleHelper}
+          classNameInput="h-14 text-4xl"
+          classNameText="text-4xl font-semibold leading-none tracking-tight cursor-pointer"
+        />
+        <TaskTitle
+          taskId={task.id}
+          taskTitle={task.description ? task.description : ""}
+          isModal
+          onKeyDown={descriptionHelper}
+          classNameInput=""
+          classNameText=""
+        />
       </div>
 
       {/*Sub tasks */}

@@ -1,5 +1,5 @@
 import { trpc } from "@/app/_trpc/client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "../ui/input";
 
 interface TaskTitleProps {
@@ -9,29 +9,40 @@ interface TaskTitleProps {
   userImageUrl?: string;
   userFirstName?: string;
   initial?: boolean;
+  classNameInput?: string;
+  classNameText?: string;
+  onKeyDown: (taskId: string, text: string) => void;
 }
 
-const TaskTitle = ({ taskId, taskTitle, isModal, initial }: TaskTitleProps) => {
+const TaskTitle = ({
+  taskId,
+  taskTitle,
+  isModal,
+  initial,
+  classNameInput,
+  classNameText,
+  onKeyDown,
+}: TaskTitleProps) => {
   const [editMode, setEditMode] = useState(false);
   const [title, setTitle] = useState(taskTitle);
 
-  useEffect(() => {
-    if (initial) {
-      setEditMode(true);
-    }
-  }, [initial]);
+  // useEffect(() => {
+  //   if (initial) {
+  //     setEditMode(true);
+  //   }
+  // }, [initial]);
 
-  const { mutate: updateTitle } = trpc.updateTitle.useMutation({
-    onSuccess: (data) => {
-      console.log("success");
-    },
-    onError: () => {
-      console.log("error");
-    },
-    onMutate: () => {
-      setEditMode(false);
-    },
-  });
+  // const { mutate: updateTitle } = trpc.updateTitle.useMutation({
+  //   onSuccess: (data) => {
+  //     console.log("success");
+  //   },
+  //   onError: () => {
+  //     console.log("error");
+  //   },
+  //   onMutate: () => {
+  //     setEditMode(false);
+  //   },
+  // });
 
   return editMode ? (
     <div>
@@ -40,13 +51,11 @@ const TaskTitle = ({ taskId, taskTitle, isModal, initial }: TaskTitleProps) => {
         autoFocus
         onBlur={() => setEditMode(false)}
         placeholder="Enter task here..."
-        className={isModal ? "h-14 text-4xl w-fit" : ""}
+        className={classNameInput}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            updateTitle({
-              taskId,
-              title,
-            });
+            setEditMode(false);
+            onKeyDown(taskId, title);
           }
         }}
         onChange={(e) => setTitle(e.target.value)}
@@ -56,15 +65,8 @@ const TaskTitle = ({ taskId, taskTitle, isModal, initial }: TaskTitleProps) => {
       </span>
     </div>
   ) : (
-    <div
-      className={
-        isModal
-          ? "text-4xl font-semibold leading-none tracking-tight cursor-pointer"
-          : "flex justify-between"
-      }
-      onClick={() => setEditMode((prev) => !prev)}
-    >
-      {title}
+    <div className={classNameText} onClick={() => setEditMode((prev) => !prev)}>
+      {title ? title : "Enter your description here..."}
     </div>
   );
 };
