@@ -41,6 +41,7 @@ const TaskText = ({
     </div>
   ) : (
     <div className={classNameText} onClick={() => setEditMode((prev) => !prev)}>
+      {/* Title is required, so the only way there's no text is if it's a description */}
       {text ? text : "Enter your description here..."}
     </div>
   );

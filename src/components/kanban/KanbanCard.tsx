@@ -183,7 +183,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
       </DialogTrigger>
 
       <DialogContent
-        className="w-full max-w-5xl h-[80%]"
+        className="w-full max-w-5xl h-fit"
         onBlur={() => utils.getUsersTasks.invalidate()}
       >
         <KanbanModal task={task} />

@@ -92,9 +92,6 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
     onError: () => {
       console.log("error");
     },
-    onMutate: () => {
-      //setEditMode(false);
-    },
   });
 
   const titleHelper = (taskId: string, text: string) => {
@@ -227,7 +224,7 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
       </DialogHeader>
 
       {/* Main section */}
-      <div className="flex flex-col flex-1 justify-around">
+      <div className="flex flex-col gap-6 py-10 ">
         <TaskText
           taskId={task.id}
           taskText={task.title}
@@ -240,12 +237,11 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
           taskText={task.description ? task.description : ""}
           onKeyDown={descriptionHelper}
           classNameInput=""
-          classNameText=""
+          classNameText="text-sm text-foreground/80"
         />
       </div>
 
       {/*Sub tasks */}
-
       <div>
         <Separator />
         <ul className="flex flex-col gap-4 pt-2">
