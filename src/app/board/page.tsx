@@ -1,22 +1,22 @@
 import KanbanBoard from "@/components/kanban/KanbanBoard";
 import { db } from "@/db/db";
 import { users } from "@/db/schema";
-import { auth } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 
 interface pageProps {}
 
 const page = async ({}: pageProps) => {
-  const { userId } = auth();
+  const user = await currentUser();
 
-  if (!userId) {
+  if (!user) {
     redirect("/sign-in");
   }
 
   // check if user is in db
   const dbUser = await db.query.users.findFirst({
-    where: eq(users.clerkId, userId),
+    where: eq(users.clerkId, user.id),
   });
 
   // sync user to db if needed
@@ -28,7 +28,7 @@ const page = async ({}: pageProps) => {
     <main className="p-16">
       <div className="">kanban header</div>
       <div className="">
-        <KanbanBoard />
+        <KanbanBoard userId={user.id} userAvatar={user.imageUrl} />
       </div>
     </main>
   );

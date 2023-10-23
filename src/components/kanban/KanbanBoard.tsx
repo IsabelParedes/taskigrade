@@ -1,10 +1,9 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-
 import { statusCols } from "@/lib/constants";
-import { Id, Task } from "@/types/types";
-import { useAuth } from "@clerk/nextjs";
+import { Task } from "@/lib/validators/taskValidator";
+import { Id } from "@/types/types";
 import {
   DndContext,
   DragEndEvent,
@@ -17,20 +16,17 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createId } from "@paralleldrive/cuid2";
-import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import KanbanColumn from "./KanbanColumn";
 import OverlayCard from "./OverlayCard";
 
-interface KanbanBoardProps {}
+interface KanbanBoardProps {
+  userId: string;
+  userAvatar: string;
+}
 
-const KanbanBoard = ({}: KanbanBoardProps) => {
-  const { userId } = useAuth();
-  if (!userId) {
-    redirect("/");
-  }
-
+const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const utils = trpc.useContext();
@@ -53,6 +49,9 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
     placeholderData: [],
   });
 
+  const { data: taskOrder, refetch: refetchTaskOrder } =
+    trpc.getTaskOrder.useQuery();
+
   const { mutate: updateStatus } = trpc.updateStatus.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
@@ -62,6 +61,12 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   const { mutate: removeTask } = trpc.deleteTask.useMutation({
     onSuccess: () => {
       utils.getUsersTasks.invalidate();
+    },
+  });
+
+  const { mutate: updateTaskOrder } = trpc.updateTaskOrder.useMutation({
+    onSuccess: () => {
+      utils.getTaskOrder.invalidate();
     },
   });
 
@@ -92,9 +97,10 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
   const createTask = (columnId: Id) => {
     const newTask: Task = {
       id: createId(),
-      status: columnId,
+      status: columnId as string,
       title: "",
       initial: true,
+      totalTime: 0,
       createdById: userId,
     };
 
@@ -174,7 +180,7 @@ const KanbanBoard = ({}: KanbanBoardProps) => {
         return t.id === activeTaskId;
       });
 
-      tasks[activeIndex].status = overTaskId;
+      tasks[activeIndex].status = overTaskId as string;
 
       // trigger a re-render
       setTasks(arrayMove(tasks, activeIndex, activeIndex));

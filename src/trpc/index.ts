@@ -1,7 +1,7 @@
 import { db } from "@/db/db";
 import { tasks, users } from "@/db/schema";
-import { TaskValidator } from "@/lib/validators/taskValidator";
-import { Task } from "@/types/types";
+import { Task, TaskValidator } from "@/lib/validators/taskValidator";
+//import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -37,7 +37,6 @@ export const appRouter = router({
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ input }) => {
-      console.log("input", input);
       await db
         .insert(tasks)
         .values({
@@ -46,6 +45,7 @@ export const appRouter = router({
           status: input.status,
           createdById: input.createdById,
           initial: input.initial,
+          totalTime: input.totalTime,
         })
         .onConflictDoUpdate({
           target: tasks.id,
@@ -61,6 +61,19 @@ export const appRouter = router({
     .mutation(async ({ input }) => {
       await db.delete(tasks).where(eq(tasks.id, input.id));
     }),
+  updateTitle: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        title: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ title: input.title })
+        .where(eq(tasks.id, input.taskId));
+    }),
   updateStatus: privateProcedure
     .input(
       z.object({
@@ -72,6 +85,67 @@ export const appRouter = router({
       await db
         .update(tasks)
         .set({ status: input.status })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  updatePriority: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        priority: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ priority: input.priority })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  updateDescription: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        description: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ description: input.description })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  getTaskOrder: privateProcedure.query(async ({ ctx }) => {
+    const taskOrder = await db.query.users.findFirst({
+      columns: {
+        taskOrder: true,
+      },
+      where: eq(users.clerkId, ctx.clerkId),
+    });
+
+    return taskOrder?.taskOrder;
+  }),
+  updateTaskOrder: privateProcedure
+    .input(z.object({ sortOrder: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      await db
+        .update(users)
+        .set({ taskOrder: input.sortOrder })
+        .where(eq(users.clerkId, ctx.clerkId));
+    }),
+  updateDueDate: privateProcedure
+    .input(z.object({ taskId: z.string(), dueDate: z.number() }))
+    .mutation(async ({ input }) => {
+      const d = new Date(input.dueDate);
+      await db
+        .update(tasks)
+        .set({ dueDate: d })
+        .where(eq(tasks.id, input.taskId));
+    }),
+  updateTotalTime: privateProcedure
+    .input(z.object({ taskId: z.string(), totalTime: z.number() }))
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ totalTime: input.totalTime })
         .where(eq(tasks.id, input.taskId));
     }),
 });

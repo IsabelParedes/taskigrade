@@ -25,7 +25,7 @@ const OverlayCard = ({ title }: OverlayCardProps) => {
       <CardHeader>
         <CardTitle className="flex"></CardTitle>
       </CardHeader>
-      <CardContent>task.title</CardContent>
+      <CardContent>{title}</CardContent>
       <CardFooter className="justify-end">
         <Button
           size={"sm"}
