@@ -100,6 +100,19 @@ export const appRouter = router({
         .set({ priority: input.priority })
         .where(eq(tasks.id, input.taskId));
     }),
+  updateDescription: privateProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        description: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      await db
+        .update(tasks)
+        .set({ description: input.description })
+        .where(eq(tasks.id, input.taskId));
+    }),
   getTaskOrder: privateProcedure.query(async ({ ctx }) => {
     const taskOrder = await db.query.users.findFirst({
       columns: {
