@@ -1,6 +1,12 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import TaskText from "@/components/kanban/TaskText";
+import DueDatePicker from "@/components/taskModal/DueDatePicker";
+import Timer from "@/components/taskModal/Timer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { DialogHeader } from "@/components/ui/dialog";
 import {
   DropdownMenu,
@@ -9,31 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Task } from "@/lib/validators/taskValidator";
 import { Check, ChevronRight, Dot, Flag, Tag } from "lucide-react";
 import { useState } from "react";
-import DueDatePicker from "../taskModal/DueDatePicker";
-import Timer from "../taskModal/Timer";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import TaskTitle from "./TaskTitle";
-
-const task = {
-  id: "test",
-  title: "test title",
-  status: "todo",
-  createdById: "created_by",
-  initial: false,
-  description: "description",
-  totalTime: "time number",
-  dueDate: "tomorrow",
-  tags: ["tag1", "tag2", "tag3"],
-  priority: "high",
-  subtasks: ["subtask1", "subtask2", "subtask3"],
-};
 
 const statuses = [
   { status: "todo", display: "To Do" },
@@ -242,18 +228,16 @@ const KanbanModal = ({ task: tempRename }: KanbanModalProps) => {
 
       {/* Main section */}
       <div className="flex flex-col flex-1 justify-around">
-        <TaskTitle
+        <TaskText
           taskId={task.id}
-          taskTitle={task.title}
-          isModal
+          taskText={task.title}
           onKeyDown={titleHelper}
           classNameInput="h-14 text-4xl"
           classNameText="text-4xl font-semibold leading-none tracking-tight cursor-pointer"
         />
-        <TaskTitle
+        <TaskText
           taskId={task.id}
-          taskTitle={task.description ? task.description : ""}
-          isModal
+          taskText={task.description ? task.description : ""}
           onKeyDown={descriptionHelper}
           classNameInput=""
           classNameText=""
