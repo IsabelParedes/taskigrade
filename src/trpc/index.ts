@@ -4,7 +4,7 @@ import { Task, TaskValidator } from "@/lib/validators/taskValidator";
 //import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
@@ -29,7 +29,7 @@ export const appRouter = router({
   }),
   getUsersTasks: privateProcedure.query(async ({ ctx }) => {
     const usersTasks = await db.query.tasks.findMany({
-      where: eq(tasks.createdById, ctx.clerkId),
+      where: and(eq(tasks.createdById, ctx.clerkId), isNull(tasks.parentId)),
     });
 
     return usersTasks as Task[];
@@ -46,6 +46,7 @@ export const appRouter = router({
           createdById: input.createdById,
           initial: input.initial,
           totalTime: input.totalTime,
+          parentId: input.parentId,
         })
         .onConflictDoUpdate({
           target: tasks.id,
