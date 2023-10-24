@@ -4,7 +4,7 @@ import { Task, TaskValidator } from "@/lib/validators/taskValidator";
 //import { Task } from "@/types/types";
 import { auth } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { privateProcedure, publicProcedure, router } from "./trpc";
 
@@ -34,6 +34,16 @@ export const appRouter = router({
 
     return usersTasks as Task[];
   }),
+  getSubTasks: privateProcedure
+    .input(z.object({ taskId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const subTasks = await db.query.tasks.findMany({
+        where: eq(tasks.parentId, input.taskId),
+        //orderBy: [desc(tasks.createdAt)],
+      });
+
+      return subTasks;
+    }),
   upsertTask: privateProcedure
     .input(TaskValidator)
     .mutation(async ({ input }) => {

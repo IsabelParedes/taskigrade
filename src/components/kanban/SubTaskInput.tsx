@@ -17,6 +17,9 @@ const SubTaskInput = ({
   toggleEditMode,
 }: SubTaskInputProps) => {
   const [text, setText] = useState("");
+
+  const utils = trpc.useContext();
+
   const { mutate: upsertTask } = trpc.upsertTask.useMutation({
     onSuccess: () => {
       console.log("success");
@@ -24,6 +27,23 @@ const SubTaskInput = ({
     onError: () => {
       console.log("error");
     },
+    onSettled: () => {
+      utils.getSubTasks.invalidate();
+    },
+    onMutate: (newSubTask: any) => {
+      utils.getSubTasks.cancel();
+
+      const prevSubTasks = utils.getSubTasks.getData();
+
+      utils.getSubTasks.setData({ taskId: parentId }, (oldData) => {
+        if (!oldData) {
+          return [];
+        }
+
+        return [...oldData, newSubTask];
+      });
+    },
+    mutationKey: ["addSubTask"],
   });
 
   if (!createdById) {

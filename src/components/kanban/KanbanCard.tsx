@@ -7,7 +7,7 @@ import { Id } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GitBranchPlus, Trash } from "lucide-react";
+import { Dot, GitBranchPlus, Trash } from "lucide-react";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -33,6 +33,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
   const { user } = useUser();
   console.log("user.id", user?.id);
 
+  const { data: subTasks } = trpc.getSubTasks.useQuery({ taskId: task.id });
   const utils = trpc.useContext();
 
   const {
@@ -69,10 +70,6 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
       console.log("error");
     },
   });
-
-  const addSubTask = () => {
-    console.log("click");
-  };
 
   if (isDragging) {
     return (
@@ -135,6 +132,17 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                     </AvatarFallback>
                   </Avatar>
                 </div>
+                <ul className="mt-2">
+                  {subTasks?.map((task) => (
+                    <li
+                      key={task.id}
+                      className="text-sm text-foreground/70 flex"
+                    >
+                      <Dot className="-mr-1 -ml-2" />
+                      {task.title}
+                    </li>
+                  ))}
+                </ul>
                 {isAddingSubTask ? (
                   <SubTaskInput
                     createdById={user?.id}
