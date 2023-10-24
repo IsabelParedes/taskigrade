@@ -1,3 +1,4 @@
+import { Task } from "@/lib/validators/taskValidator";
 import { Column, Id } from "@/types/types";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useMemo } from "react";
@@ -5,7 +6,6 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Separator } from "../ui/separator";
 import KanbanCard from "./KanbanCard";
 import KanbanHeader from "./KanbanHeader";
-import { Task } from "@/lib/validators/taskValidator";
 
 interface KanbanColumnProps {
   //title: "to do" | "in progress" | "test" | "complete";
