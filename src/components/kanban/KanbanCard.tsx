@@ -1,12 +1,14 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
+import SubTaskInput from "@/components/kanban/SubTaskInput";
 import { Task } from "@/lib/validators/taskValidator";
 import { Id } from "@/types/types";
 import { useUser } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GitBranchPlus, Trash } from "lucide-react";
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
@@ -27,7 +29,9 @@ interface KanbanCardProps {
 }
 
 const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
+  const [isAddingSubTask, setIsAddingSubTask] = useState(false);
   const { user } = useUser();
+  console.log("user.id", user?.id);
 
   const utils = trpc.useContext();
 
@@ -49,6 +53,10 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
   const style = {
     transition,
     transform: CSS.Transform.toString(transform),
+  };
+
+  const toggleEditMode = () => {
+    setIsAddingSubTask((prev) => !prev);
   };
 
   //upsert task
@@ -106,6 +114,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                         initial: false,
                         status: task.status as string,
                         totalTime: task.totalTime,
+                        parentId: null,
                       });
                     }
                   }}
@@ -116,14 +125,23 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                 </span>
               </>
             ) : (
-              <div className="flex justify-between">
-                {task.title}
-                <Avatar className="h-6 w-6">
-                  <AvatarImage src={user?.imageUrl} />
-                  <AvatarFallback>
-                    {user?.firstName?.slice(0, 1)}
-                  </AvatarFallback>
-                </Avatar>
+              <div className="">
+                <div className="flex justify-between">
+                  {task.title}
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={user?.imageUrl} />
+                    <AvatarFallback>
+                      {user?.firstName?.slice(0, 1)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                {isAddingSubTask ? (
+                  <SubTaskInput
+                    createdById={user?.id}
+                    parentId={task.id}
+                    toggleEditMode={toggleEditMode}
+                  />
+                ) : null}
               </div>
             )}
           </CardContent>
@@ -149,6 +167,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                     status: task.status as string,
                     description: task.description,
                     totalTime: task.totalTime,
+                    parentId: null,
                   });
                 }}
               >
@@ -159,7 +178,10 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
                 <Button
                   size={"sm"}
                   className="border hover:bg-secondary"
-                  onClick={addSubTask}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleEditMode();
+                  }}
                 >
                   <GitBranchPlus className="h-4 w-4" />
                 </Button>

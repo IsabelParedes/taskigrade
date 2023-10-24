@@ -102,6 +102,7 @@ const KanbanBoard = ({ userAvatar, userId }: KanbanBoardProps) => {
       initial: true,
       totalTime: 0,
       createdById: userId,
+      parentId: null,
     };
 
     setTasks([...tasks, newTask]);

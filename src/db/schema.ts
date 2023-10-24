@@ -28,6 +28,7 @@ export const tasks = sqliteTable("tasks", {
   dueDate: integer("due_date", {
     mode: "timestamp",
   }),
+  parentId: text("parent_id"),
   totalTime: integer("total_time").default(0),
   createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
   updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`),

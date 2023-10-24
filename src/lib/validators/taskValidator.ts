@@ -9,6 +9,7 @@ export const TaskValidator = z.object({
   totalTime: z.number(),
   dueDate: z.number().nullish(),
   priority: z.string().nullish(),
+  parentId: z.string().nullable(),
 });
 
 export type Task = z.infer<typeof TaskValidator>;
