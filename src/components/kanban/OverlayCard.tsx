@@ -20,7 +20,10 @@ const OverlayCard = ({ title }: OverlayCardProps) => {
   };
 
   return (
-    <Card style={style} className="cursor-grab bg-secondary hover:bg-accent/80">
+    <Card
+      style={style}
+      className="cursor-grab bg-secondary hover:bg-accent/80 opacity-50"
+    >
       <CardHeader>
         <CardTitle className="flex"></CardTitle>
       </CardHeader>
