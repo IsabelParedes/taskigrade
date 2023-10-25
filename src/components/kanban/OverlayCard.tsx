@@ -1,7 +1,6 @@
 "use client";
 
-import { Trash } from "lucide-react";
-import { Button } from "../ui/button";
+import { GitBranchPlus, Trash } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -26,14 +25,13 @@ const OverlayCard = ({ title }: OverlayCardProps) => {
         <CardTitle className="flex"></CardTitle>
       </CardHeader>
       <CardContent>{title}</CardContent>
-      <CardFooter className="justify-end">
-        <Button
-          size={"sm"}
-          variant={"outline"}
-          className="bg-transparent hover:bg-destructive"
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
+      <CardFooter className="justify-between">
+        <div className="h-9 inline-flex rounded-md px-3 border items-center justify-center">
+          <GitBranchPlus className="h-4 w-4 " />
+        </div>
+        <div className="h-9 inline-flex rounded-md px-3 border items-center justify-center">
+          <Trash className="h-4 w-4 " />
+        </div>
       </CardFooter>
     </Card>
   );
