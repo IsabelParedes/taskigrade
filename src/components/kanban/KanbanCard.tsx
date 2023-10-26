@@ -1,11 +1,15 @@
 "use client";
 
 import { trpc } from "@/app/_trpc/client";
-import { Id, Task } from "@/types/types";
+import SubTaskInput from "@/components/kanban/SubTaskInput";
+import { Task } from "@/lib/validators/taskValidator";
+import { Id } from "@/types/types";
+import { useUser } from "@clerk/nextjs";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Trash } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Dot, GitBranchPlus, Trash } from "lucide-react";
+import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import {
   Card,
@@ -14,7 +18,9 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
+import KanbanModal from "./KanbanModal";
 
 interface KanbanCardProps {
   task: Task;
@@ -23,20 +29,12 @@ interface KanbanCardProps {
 }
 
 const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
-  const [editMode, setEditMode] = useState(false);
+  const [isAddingSubTask, setIsAddingSubTask] = useState(false);
+  const { user } = useUser();
+  console.log("user.id", user?.id);
 
+  const { data: subTasks } = trpc.getSubTasks.useQuery({ taskId: task.id });
   const utils = trpc.useContext();
-
-  /*  const { userId } = useAuth();
-  if (!userId) {
-    redirect("/");
-  } */
-
-  useEffect(() => {
-    if (task.initial) {
-      setEditMode(true);
-    }
-  }, [task.initial]);
 
   const {
     setNodeRef,
@@ -59,8 +57,7 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
   };
 
   const toggleEditMode = () => {
-    task.initial = false;
-    setEditMode((prev) => !prev);
+    setIsAddingSubTask((prev) => !prev);
   };
 
   //upsert task
@@ -71,9 +68,6 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
     },
     onError: () => {
       console.log("error");
-    },
-    onMutate: () => {
-      toggleEditMode();
     },
   });
 
@@ -86,90 +80,145 @@ const KanbanCard = ({ task, updateTask, deleteTask }: KanbanCardProps) => {
       />
     );
   }
-  const EditContent = () => {
-    return (
-      <Input
-        value={task.title}
-        autoFocus
-        onBlur={() => setEditMode(false)}
-        placeholder="Enter task here..."
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && e.shiftKey) {
-            saveTask({
-              id: task.id as string,
-              title: task.title,
-              createdById: task.createdById,
-              initial: false,
-              status: task.status as string,
-              description: task.description,
-            });
-          }
-        }}
-        onChange={(e) => updateTask(task.id, e.target.value)}
-      />
-    );
-  };
 
   return (
-    <Card
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="cursor-grab bg-secondary hover:bg-accent/80"
-    >
-      <CardHeader>
-        <CardTitle className="flex"></CardTitle>
-      </CardHeader>
-      <CardContent
-        onMouseDown={(e) => e.preventDefault()}
-        onClick={() => {
-          toggleEditMode();
-        }}
+    <Dialog>
+      <DialogTrigger asChild>
+        <Card
+          ref={setNodeRef}
+          style={style}
+          {...attributes}
+          {...listeners}
+          className="cursor-grab bg-secondary hover:bg-accent/80"
+        >
+          <CardHeader>
+            <CardTitle className="flex"></CardTitle>
+          </CardHeader>
+          <CardContent>
+            {task.initial ? (
+              <>
+                <Input
+                  value={task.title}
+                  autoFocus
+                  placeholder="Enter task here..."
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      saveTask({
+                        id: task.id as string,
+                        title: task.title,
+                        createdById: task.createdById,
+                        initial: false,
+                        status: task.status as string,
+                        totalTime: task.totalTime,
+                        parentId: null,
+                      });
+                    }
+                  }}
+                  onChange={(e) => updateTask(task.id, e.target.value)}
+                />
+                <span className="text-xs text-foreground/80">
+                  Press Enter to save...
+                </span>
+              </>
+            ) : (
+              <div className="">
+                <div className="flex justify-between">
+                  {task.title}
+                  <Avatar className="h-6 w-6">
+                    <AvatarImage src={user?.imageUrl} />
+                    <AvatarFallback>
+                      {user?.firstName?.slice(0, 1)}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <ul className="mt-2">
+                  {subTasks?.map((task) => (
+                    <li
+                      key={task.id}
+                      className="text-sm text-foreground/70 flex"
+                    >
+                      <Dot className="-mr-1 -ml-2" />
+                      {task.title}
+                    </li>
+                  ))}
+                </ul>
+                {isAddingSubTask ? (
+                  <SubTaskInput
+                    createdById={user?.id}
+                    parentId={task.id}
+                    toggleEditMode={toggleEditMode}
+                  />
+                ) : null}
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="justify-end">
+            {task.initial ? (
+              <Button
+                key={`save ${task.id}`}
+                aria-label="save new task"
+                size={"sm"}
+                variant={"outline"}
+                className="bg-transparent hover:bg-secondary"
+                onMouseDown={(e) =>
+                  // need this so onClick fires before inputs onBlur
+                  e.preventDefault()
+                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  saveTask({
+                    id: task.id as string,
+                    title: task.title,
+                    createdById: task.createdById,
+                    initial: false,
+                    status: task.status as string,
+                    description: task.description,
+                    totalTime: task.totalTime,
+                    parentId: null,
+                  });
+                }}
+              >
+                Save
+              </Button>
+            ) : (
+              <div className="flex justify-between w-full">
+                <Button
+                  size={"sm"}
+                  className="border hover:bg-secondary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleEditMode();
+                  }}
+                >
+                  <GitBranchPlus className="h-4 w-4" />
+                </Button>
+                <Button
+                  key={`delete ${task.id}`}
+                  aria-label="delete task"
+                  size={"sm"}
+                  variant={"outline"}
+                  className="bg-transparent hover:bg-destructive"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteTask(task.id as string);
+                  }}
+                >
+                  <Trash className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </CardFooter>
+        </Card>
+      </DialogTrigger>
+
+      <DialogContent
+        className="w-full max-w-5xl h-fit"
+        onBlur={() => utils.getUsersTasks.invalidate()}
       >
-        {editMode ? <EditContent /> : task.title}
-      </CardContent>
-      <CardFooter className="justify-end">
-        {editMode ? (
-          <Button
-            key={`save ${task.id}`}
-            aria-label="save new task"
-            size={"sm"}
-            variant={"outline"}
-            className="bg-transparent hover:bg-secondary"
-            onMouseDown={(e) =>
-              // need this so onClick fires before inputs onBlur
-              e.preventDefault()
-            }
-            onClick={() => {
-              saveTask({
-                id: task.id as string,
-                title: task.title,
-                createdById: task.createdById,
-                initial: false,
-                status: task.status as string,
-                description: task.description,
-              });
-            }}
-          >
-            Save
-          </Button>
-        ) : (
-          <Button
-            key={`delete ${task.id}`}
-            aria-label="delete task"
-            size={"sm"}
-            variant={"outline"}
-            className="bg-transparent hover:bg-destructive"
-            onClick={() => {
-              deleteTask(task.id as string);
-            }}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+        <KanbanModal task={task} />
+      </DialogContent>
+    </Dialog>
   );
 };
 

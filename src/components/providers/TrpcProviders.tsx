@@ -2,12 +2,11 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { absoluteUrl } from "@/lib/utils";
-import { ClerkProvider } from "@clerk/nextjs";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { PropsWithChildren, useState } from "react";
 
-const Providers = ({ children }: PropsWithChildren) => {
+const Providers = ({ children, ...props }: PropsWithChildren) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
@@ -19,11 +18,9 @@ const Providers = ({ children }: PropsWithChildren) => {
     })
   );
   return (
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
-      </trpc.Provider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </trpc.Provider>
   );
 };
 

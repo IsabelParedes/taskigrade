@@ -1,5 +1,6 @@
 "use client";
 
+import { ModeToggle } from "@/components/ModeToggle";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Menu } from "lucide-react";
 import Link from "next/link";
@@ -39,6 +40,7 @@ const Navbar = ({}) => {
             <Button>Sign In</Button>
           </SignInButton>
         </SignedOut>
+        <ModeToggle />
       </div>
     </header>
   );
